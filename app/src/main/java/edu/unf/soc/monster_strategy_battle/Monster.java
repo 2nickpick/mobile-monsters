@@ -1,17 +1,35 @@
 package edu.unf.soc.monster_strategy_battle;
 
 import org.andengine.engine.handler.physics.PhysicsHandler;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.text.Text;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Monster extends GameObject {
 
     private String name;
     private ArrayList<MonsterType> types = new ArrayList<>();
     private ArrayList<Attack> attacks = new ArrayList<>();
+    private int baseHP, currentHP, maxHP;
+    private int baseAttack, currentAttack;
+    private int baseDefense, currentDefense;
+    private int baseSpecial, currentSpecial;
+    private int baseSpeed, currentSpeed;
+    private int level = 50;
+
+    private long[] releaseFrameDuration = {100};
+    private long[] attackFrameDuration = {100};
+    private long[] damageFrameDuration = {100};
+    private long[] faintFrameDuration = {100};
+    private int[] releaseFrames = {0};
+    private int[] attackFrames = {0};
+    private int[] damageFrames = {0};
+    private int[] faintFrames = {0};
 
     private ITiledTextureRegion preview;
 
@@ -24,6 +42,84 @@ public class Monster extends GameObject {
         this.name = name;
         this.types = types;
         this.attacks = attacks;
+        this.preview = textureRegion;
+
+        // setup stats based on monster name
+        switch(name) {
+            case "Charizard":
+                this.baseHP = 78;
+                this.baseAttack = 104;
+                this.baseDefense = 78;
+                this.baseSpecial = 130;
+                this.baseSpeed = 100;
+
+                break;
+            case "Blastoise":
+                this.baseHP = 79;
+                this.baseAttack = 103;
+                this.baseDefense = 120;
+                this.baseSpecial = 125;
+                this.baseSpeed = 78;
+                break;
+            case "Venusaur":
+                this.baseHP = 80;
+                this.baseAttack = 100;
+                this.baseDefense = 123;
+                this.baseSpecial = 121;
+                this.baseSpeed = 80;
+                break;
+            case "Hitmonchan":
+                this.baseHP = 50;
+                this.baseAttack = 105;
+                this.baseDefense = 79;
+                this.baseSpecial = 80;
+                this.baseSpeed = 76;
+                break;
+            case "Alakazam":
+                this.baseHP = 55;
+                this.baseAttack = 50;
+                this.baseDefense = 65;
+                this.baseSpecial = 145;
+                this.baseSpeed = 150;
+                break;
+            case "Rhydon":
+                this.baseHP = 105;
+                this.baseAttack = 130;
+                this.baseDefense = 120;
+                this.baseSpecial = 45;
+                this.baseSpeed = 40;
+                break;
+            case "Dragonite":
+                this.baseHP = 91;
+                this.baseAttack = 134;
+                this.baseDefense = 95;
+                this.baseSpecial = 100;
+                this.baseSpeed = 80;
+                break;
+            case "Starmie":
+                this.baseHP = 60;
+                this.baseAttack = 75;
+                this.baseDefense = 85;
+                this.baseSpecial = 100;
+                this.baseSpeed = 115;
+                break;
+            case "Raichu":
+                this.baseHP = 60;
+                this.baseAttack = 90;
+                this.baseDefense = 55;
+                this.baseSpecial = 85;
+                this.baseSpeed = 110;
+                break;
+        }
+
+        Random random = new Random();
+        this.currentHP = (int)Math.ceil((random.nextInt(31) + 2 * this.baseHP ) * (this.level / 100f) + 60);
+        this.maxHP = this.currentHP;
+
+        this.currentAttack = (int)Math.ceil((random.nextInt(31) + 2 * this.baseAttack) * (this.level / 100f) + 5);
+        this.currentDefense = (int)Math.ceil((random.nextInt(31) + 2 * this.baseDefense) * (this.level / 100f) + 5);
+        this.currentSpecial = (int)Math.ceil((random.nextInt(31) + 2 * this.baseSpecial) * (this.level / 100f) + 5);
+        this.currentSpeed = (int)Math.ceil((random.nextInt(31) + 2 * this.baseSpeed) * (this.level / 100f) + 5);
     }
 
     protected void onManagedUpdate(float pSecondsElapsed) {
@@ -48,6 +144,19 @@ public class Monster extends GameObject {
         return types;
     }
 
+    public String getTypeString() {
+
+        String typeString = "";
+        for(int i = 0; i < this.types.size(); i++) {
+            typeString += this.types.get(i).getName();
+            if(i != this.types.size() - 1) {
+                typeString += ", ";
+            }
+        }
+
+        return typeString;
+    }
+
     public void setTypes(ArrayList<MonsterType> types) {
         this.types = types;
     }
@@ -66,5 +175,77 @@ public class Monster extends GameObject {
 
     public void setPreview(ITiledTextureRegion preview) {
         this.preview = preview;
+    }
+
+    public int getBaseHP() {
+        return baseHP;
+    }
+
+    public void setBaseHP(int baseHP) {
+        this.baseHP = baseHP;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
+    }
+
+    public boolean isFainted() {
+        return this.currentHP <= 0;
+    }
+
+    public String toString() {
+        return this.name + "\tHP:" + this.currentHP;
+    }
+
+    public void release(Scene scene, boolean player) {
+        this.detachSelf();
+        scene.attachChild(this);
+
+        if(player) {
+            this.setPosition(75, 325);
+        } else {
+            this.setPosition(325, 60);
+        }
+
+        this.animate(releaseFrameDuration, releaseFrames, true);
+    }
+
+    public void attack() {
+        this.animate(attackFrameDuration, attackFrames, true);
+    }
+
+    public void damage(int damage) {
+
+        this.currentHP -= damage;
+        this.animate(damageFrameDuration, damageFrames, true);
+
+        if(this.isFainted()) {
+            this.currentHP = 0;
+            this.faint();
+        }
+    }
+
+    public void faint() {
+        this.animate(faintFrameDuration, faintFrames, true);
+    }
+
+    public int getCurrentAttack() {
+        return currentAttack;
+    }
+
+    public void setCurrentAttack(int currentAttack) {
+        this.currentAttack = currentAttack;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
     }
 }
