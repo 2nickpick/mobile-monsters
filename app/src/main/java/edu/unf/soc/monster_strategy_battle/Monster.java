@@ -6,6 +6,7 @@ import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.debug.Debug;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -220,8 +221,15 @@ public class Monster extends GameObject {
 
     public void damage(int damage) {
 
+        if(damage > this.currentHP){
+            damage = currentHP;
+        }
+
         this.currentHP -= damage;
         this.animate(damageFrameDuration, damageFrames, true);
+
+        Debug.d(this.getName() + " lost " + damage + "HP!!");
+        Debug.d(this.getName() + "'s current HP: " + currentHP + "");
 
         if(this.isFainted()) {
             this.currentHP = 0;
@@ -230,6 +238,7 @@ public class Monster extends GameObject {
     }
 
     public void faint() {
+        Debug.d(this.getName() + " fainted!!!");
         this.animate(faintFrameDuration, faintFrames, true);
     }
 
@@ -247,5 +256,37 @@ public class Monster extends GameObject {
 
     public void setMaxHP(int maxHP) {
         this.maxHP = maxHP;
+    }
+
+    public int getCurrentSpeed() {
+        return currentSpeed;
+    }
+
+    public void setCurrentSpeed(int currentSpeed) {
+        this.currentSpeed = currentSpeed;
+    }
+
+    public int getCurrentSpecial() {
+        return currentSpecial;
+    }
+
+    public void setCurrentSpecial(int currentSpecial) {
+        this.currentSpecial = currentSpecial;
+    }
+
+    public int getCurrentDefense() {
+        return currentDefense;
+    }
+
+    public void setCurrentDefense(int currentDefense) {
+        this.currentDefense = currentDefense;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

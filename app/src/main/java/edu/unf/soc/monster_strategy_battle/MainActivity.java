@@ -94,9 +94,13 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private MenuScene battleMenu = new MenuScene();
     private MenuScene attackMenu = new MenuScene();
     private MenuScene monsterMenu = new MenuScene();
+    private MenuScene victoryMenu = new MenuScene();
+    private MenuScene defeatMenu = new MenuScene();
 
     private Music menuMusic;
     private Music battleMusic;
+    private Music victoryMusic;
+    private Music defeatMusic;
     private Sound menuCursorSound;
     private ITexture fontTextureAtlas;
     private Font comicSansFull, comicSansH1, comicSansH2, sansSmall;
@@ -119,6 +123,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private Text activePlayerMonsterName;
     private Text activePlayerMonsterLevel;
     private Text activePlayerMonsterHP;
+
+    private boolean startNextTurn; //whether or not next turn is interrupted by game state
 
     @Override
     protected void onCreateResources() {
@@ -479,9 +485,19 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             // music
             menuMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music/menu.mp3");
             menuMusic.setVolume(.75f);
+            menuMusic.setLooping(true);
 
             battleMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music/battle.mp3");
             battleMusic.setVolume(.75f);
+            battleMusic.setLooping(true);
+
+            victoryMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music/victory.mp3");
+            victoryMusic.setVolume(.75f);
+            victoryMusic.setLooping(true);
+
+            defeatMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music/defeat.mp3");
+            defeatMusic.setVolume(.75f);
+            defeatMusic.setLooping(true);
 
             // sounds
             menuCursorSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/menu.wav");
@@ -512,7 +528,15 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         // Start at the Main Menu
         this.scene.setChildScene(this.mainMenu);
-        menuMusic.setLooping(true);
+        if(victoryMusic.isPlaying()) {
+            victoryMusic.pause();
+        }
+        if(defeatMusic.isPlaying()) {
+            defeatMusic.pause();
+        }
+        if(battleMusic.isPlaying()) {
+            battleMusic.pause();
+        }
         menuMusic.play();
 
         return this.scene;
@@ -520,20 +544,21 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private void generateTeams() {
 
-        MonsterType fire = new MonsterType("Fire", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType water = new MonsterType("Water", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType flying = new MonsterType("Flying", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType electric = new MonsterType("Electric", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType psychic = new MonsterType("Psychic", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType dragon = new MonsterType("Dragon", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType grass = new MonsterType("Grass", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType poison = new MonsterType("Poison", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType ice = new MonsterType("Ice", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType normal = new MonsterType("Normal", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType fighting = new MonsterType("Fighting", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType ghost = new MonsterType("Ghost", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType rock = new MonsterType("Rock", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
-        MonsterType ground = new MonsterType("Ground", new ArrayList<MonsterType>(), new ArrayList<MonsterType>());
+        MonsterType bug = new MonsterType("Bug");
+        MonsterType fire = new MonsterType("Fire");
+        MonsterType water = new MonsterType("Water");
+        MonsterType flying = new MonsterType("Flying");
+        MonsterType electric = new MonsterType("Electric");
+        MonsterType psychic = new MonsterType("Psychic");
+        MonsterType dragon = new MonsterType("Dragon");
+        MonsterType grass = new MonsterType("Grass");
+        MonsterType poison = new MonsterType("Poison");
+        MonsterType ice = new MonsterType("Ice");
+        MonsterType normal = new MonsterType("Normal");
+        MonsterType fighting = new MonsterType("Fighting");
+        MonsterType ghost = new MonsterType("Ghost");
+        MonsterType rock = new MonsterType("Rock");
+        MonsterType ground = new MonsterType("Ground");
 
         Attack flamethrower = new Attack("Flamethrower", 95, 100, fire);
         Attack wingAttack = new Attack("Wing Attack", 95, 100, flying);
@@ -921,6 +946,44 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         return this.monsterMenu;
     }
 
+    private MenuScene createVictoryMenu() {
+        this.victoryMenu = new MenuScene(mCamera);
+        this.victoryMenu.setX(105);
+        this.victoryMenu.setY(160);
+
+        final IMenuItem exitGameMenuItem = new ScaleMenuItemDecorator(
+                new SpriteMenuItem(11, mExitBattleMenuItemTexture, getVertexBufferObjectManager()
+                ), 1.2f, 1);
+
+        this.victoryMenu.addMenuItem(exitGameMenuItem);
+
+        this.victoryMenu.buildAnimations();
+        this.victoryMenu.setBackgroundEnabled(false);
+
+        this.victoryMenu.setOnMenuItemClickListener(this);
+
+        return this.victoryMenu;
+    }
+
+    private MenuScene createDefeatMenu() {
+        this.defeatMenu = new MenuScene(mCamera);
+        this.defeatMenu.setX(105);
+        this.defeatMenu.setY(160);
+
+        final IMenuItem exitGameMenuItem = new ScaleMenuItemDecorator(
+                new SpriteMenuItem(11, mExitBattleMenuItemTexture, getVertexBufferObjectManager()
+                ), 1.2f, 1);
+
+        this.defeatMenu.addMenuItem(exitGameMenuItem);
+
+        this.defeatMenu.buildAnimations();
+        this.defeatMenu.setBackgroundEnabled(false);
+
+        this.defeatMenu.setOnMenuItemClickListener(this);
+
+        return this.defeatMenu;
+    }
+
     public void setupBattleMenu() {
 
         this.attackMenu.clearMenuItems();
@@ -987,7 +1050,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             this.monsterMenu.addMenuItem(monsterMenuItem);
         }
 
-        if(!exit) {
+        if(exit) {
             final IMenuItem exitAttacksMenuItem = new ScaleMenuItemDecorator(
                     new SpriteMenuItem(13, mBackMenuItemTexture, getVertexBufferObjectManager()
                     ), 1.2f, 1);
@@ -1010,6 +1073,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.createBattleMenu();
         this.createAttackMenu();
         this.createMonsterMenu();
+        this.createVictoryMenu();
+        this.createDefeatMenu();
 
         this.opponentIndex = (new Random()).nextInt(this.characterTeams.size()-1);
         while(this.opponentIndex == this.playerIndex) {
@@ -1116,14 +1181,13 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 return true;
             case 7:
                 // I choose you!
-                menuMusic.stop();
+                menuMusic.pause();
 
                 this.scene.detachChildren();
 
                 this.onCreateBattleScene();
 
                 this.gameScene.setChildScene(this.battleMenu);
-                battleMusic.setLooping(true);
                 battleMusic.play();
 
                 mEngine.setScene(this.gameScene);
@@ -1143,14 +1207,14 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             case 11:
                 // running away
-                battleMusic.stop();
+                battleMusic.pause();
 
                 this.gameScene.detachChildren();
 
                 this.onCreateScene();
                 mEngine.setScene(this.scene);
                 this.scene.setChildScene(this.mainMenu);
-                menuMusic.setLooping(true);
+                menuMusic.seekTo(0);
                 menuMusic.play();
 
                 return true;
@@ -1160,97 +1224,91 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 // switch monsters
 
             case 12:
-                // attack was chosen, calculate damage
+                // attack was chosen
+                Monster activeMonster = this.characterTeams
+                        .get(playerIndex).get(activePlayerMonsterIndex);
+                Monster opponentMonster = this.characterTeams
+                        .get(opponentIndex).get(activeOpponentMonsterIndex);
 
+                this.startNextTurn = true;
+
+                // process the turn
                 boolean monsterSwitched = pMenuItem.getID() == 14;
+
                 boolean forcedSwitch = false;
-                if(!monsterSwitched) {
-                    // chose an attack
-                    Debug.d(
-                            this.characterTeams
-                                    .get(playerIndex)
-                                    .get(activePlayerMonsterIndex)
-                                    .getAttacks()
-                                    .get(((AttackMenuItemDecorator) pMenuItem).getAttackIndex())
-                                    .getName()
-                    );
-
-                    // put damage on the opponent monster
-                    this.characterTeams
-                            .get(opponentIndex)
-                            .get(activeOpponentMonsterIndex)
-                            .damage(100);
-                    this.updateMonsterInformation(activeOpponentMonsterIndex, false);
-
-                    if(
-                        this.characterTeams
-                            .get(opponentIndex)
-                            .get(activeOpponentMonsterIndex).isFainted()) {
-                        int switchMonster = this.opponentMustSwitchMonster();
-                        if(switchMonster == -1) {
-                            //handle victory
-                        }
-                    }
-
-                } else {
+                if(monsterSwitched) {
                     // chose a monster to switch to
                     this.switchMonster(
-                        ((MonsterMenuItemDecorator) pMenuItem).getMonsterIndex(),
-                        this.activePlayerMonsterIndex,
-                        true
+                            ((MonsterMenuItemDecorator) pMenuItem).getMonsterIndex(),
+                            this.activePlayerMonsterIndex,
+                            true
                     );
-
+                    activeMonster = this.characterTeams.get(playerIndex).get(activePlayerMonsterIndex);
                 }
 
-                // determine opponent's next choice
+                // determine if opponent must switch
                 int switchMonster = this.opponentChooseSwitchMonster();
                 if(switchMonster != -1) {
 
                     // chose a monster to switch to
                     this.switchMonster(
-                        switchMonster,
-                        this.activeOpponentMonsterIndex,
-                        false
+                            switchMonster,
+                            this.activeOpponentMonsterIndex,
+                            false
                     );
+                    opponentMonster = this.characterTeams.get(opponentIndex).get(activeOpponentMonsterIndex);
+                }
 
+                //opponent is attacking
+                boolean opponentWillAttack = switchMonster == -1;
+
+                //player is attacking
+                boolean playerWillAttack = !monsterSwitched;
+
+                if(activeMonster.getCurrentSpeed() > opponentMonster.getCurrentSpeed()
+                    || activeMonster.getCurrentSpeed() == opponentMonster.getCurrentSpeed()
+                    && Math.random() > .5) {
+
+                    //player goes first
+                    if(playerWillAttack) {
+                        processAttack(
+                                activeMonster,
+                                opponentMonster,
+                                ((AttackMenuItemDecorator) pMenuItem).getAttackIndex(),
+                                true
+                        );
+                    }
+                    if(opponentWillAttack && !opponentMonster.isFainted()) {
+                        processAttack(
+                                opponentMonster,
+                                activeMonster,
+                                new Random().nextInt(opponentMonster.getAttacks().size()),
+                                false
+                        );
+                    }
                 } else {
-                    // determine opponent's attack
-                    ArrayList<Attack> opponentAttacks =
-                        this.characterTeams
-                            .get(opponentIndex)
-                            .get(activeOpponentMonsterIndex)
-                            .getAttacks();
+                    //opponent goes first
+                    if(opponentWillAttack) {
+                        processAttack(
+                                opponentMonster,
+                                activeMonster,
+                                new Random().nextInt(opponentMonster.getAttacks().size()),
+                                false
+                        );
+                    }
 
-                    Debug.d(
-                            opponentAttacks
-                                    .get((new Random()).nextInt(opponentAttacks.size()))
-                                    .getName()
-                    );
-
-                    // put damage on the player
-                    this.characterTeams
-                            .get(playerIndex)
-                            .get(activePlayerMonsterIndex)
-                            .damage(100);
-                    this.updateMonsterInformation(activePlayerMonsterIndex, true);
-
-                    if(
-                        this.characterTeams
-                            .get(playerIndex)
-                            .get(activePlayerMonsterIndex).isFainted()) {
-
-                        if(playerDefeated()) {
-                            //handle defeat
-
-                        } else {
-                            forcedSwitch = true;
-                            this.setupMonsterMenu(false);
-                        }
+                    if(playerWillAttack && !activeMonster.isFainted()) {
+                        processAttack(
+                                activeMonster,
+                                opponentMonster,
+                                ((AttackMenuItemDecorator) pMenuItem).getAttackIndex(),
+                                true
+                        );
                     }
                 }
 
                 // start next turn
-                if(!forcedSwitch) {
+                if(this.startNextTurn) {
                     this.gameScene.setChildScene(battleMenu);
                 }
 
@@ -1263,7 +1321,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             case 15:
                 // forced switch
-
                 this.switchMonster(
                         ((MonsterMenuItemDecorator) pMenuItem).getMonsterIndex(),
                         this.activePlayerMonsterIndex,
@@ -1274,6 +1331,108 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             default:
                 return false;
+        }
+    }
+
+    private void processAttack(Monster monster, Monster targetMonster, int attackIndex, boolean player) {
+
+        Attack attack = monster
+                .getAttacks()
+                .get(attackIndex);
+
+        // chose an attack
+        Debug.d( (player ? "Player " : "Opponent ") + " used: " +
+            attack.getName()
+        );
+
+//        Damage Calculations
+//        http://www.serebii.net/games/damage.shtml
+//
+//        ((((2 * Level / 5 + 2) * AttackStat * AttackPower / DefenseStat) / 50) + 2) * STAB * Weakness/Resistance * RandomNumber / 100
+//
+//        A = attacker's Level
+//        B = attacker's Attack or Special
+//        C = attack Power
+//        D = defender's Defense or Special
+//        X = same-Type attack bonus (1 or 1.5)
+//        Y = Type modifiers (40, 20, 10, 5, 2.5, or 0)
+//        Z = a random number between 217 and 255
+
+        int attackersLevel = monster.getLevel();
+        int criticalHit = (Math.random() <= .15) ? 2 : 1;
+        int attackPower = attack.getPower();
+        boolean isSpecial = attack.isSpecial();
+        int monsterAttackPower = isSpecial ? monster.getCurrentSpecial() : monster.getCurrentAttack();
+        int targetDefensePower = isSpecial ? targetMonster.getCurrentSpecial() : targetMonster.getCurrentDefense();
+        float STAB = monster.getTypes().indexOf(attack.getType()) >= 0 ? 1.5f : 1;
+        int randomNumber = (new Random()).nextInt(100 - 85 + 1) + 85;
+
+        float effectiveness = 1f; // TODO: calculate effectiveness, Weakness/Resistance
+        for(MonsterType type : targetMonster.getTypes()) {
+            if(type.getWeaknesses().indexOf(type) >= 0) {
+                effectiveness *= 2;
+            }
+
+            if(type.getResistances().indexOf(type) >= 0) {
+                effectiveness /= 2;
+            }
+        }
+
+        if(effectiveness > 1f) {
+            Debug.d("It's super effective!" + effectiveness);
+        } else if(effectiveness == 0) {
+            Debug.d("It's does not affect..." + effectiveness);
+        } else if(effectiveness < 1f) {
+            Debug.d("It's not very effective..." + effectiveness);
+        } else {
+            Debug.d("That's some neutral damage right thur.");
+        }
+
+        if(criticalHit == 2) {
+            Debug.d("Critical Hit!");
+        }
+
+        // put damage on the opponent monster
+        float damage_calculation = ((((2 * (attackersLevel * criticalHit) / 5 + 2)
+                * monsterAttackPower * attackPower / targetDefensePower) / 50) + 2) * STAB * effectiveness * randomNumber / 100;
+
+        targetMonster.damage(Math.round(damage_calculation));
+        this.updateMonsterInformation(
+            player ? activePlayerMonsterIndex : activeOpponentMonsterIndex,
+            player
+        );
+
+        if(targetMonster.isFainted()) {
+            if(player) {
+                int mustSwitchMonster = this.opponentMustSwitchMonster();
+                if(mustSwitchMonster == -1) {
+                    //handle victory
+                    Debug.d("Victory!!!");
+                    battleMusic.pause();
+                    victoryMusic.seekTo(0);
+                    victoryMusic.play();
+
+                    this.startNextTurn = false;
+                    this.gameScene.setChildScene(victoryMenu);
+                } else {
+                    this.switchMonster(mustSwitchMonster, activeOpponentMonsterIndex, false);
+                }
+            } else {
+                if(!playerDefeated()) {
+                    this.startNextTurn = false;
+                    this.setupMonsterMenu(false);
+                    this.gameScene.setChildScene(monsterMenu);
+                } else {
+                    //handle defeat
+                    Debug.d("Defeat!!!");
+                    battleMusic.pause();
+                    defeatMusic.seekTo(0);
+                    defeatMusic.play();
+
+                    this.startNextTurn = false;
+                    this.gameScene.setChildScene(defeatMenu);
+                }
+            }
         }
     }
 
@@ -1309,7 +1468,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 .get(newMonsterIndex)
                 .release(this.gameScene, player);
 
-        Debug.d( (player ? "" : "Opponent ") + "Switched to: " +
+        Debug.d( (player ? "Player " : "Opponent ") + "Switched to: " +
                         this.characterTeams
                                 .get(switchingPlayerIndex)
                                 .get( newMonsterIndex )
@@ -1318,7 +1477,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private boolean playerDefeated() {
         ArrayList<Monster> monsters = this.characterTeams.get(playerIndex);
-        ArrayList<Monster> availableMonsters = new ArrayList();
 
         for(int i = 0; i < monsters.size(); i++) {
             if(!monsters.get(i).isFainted()) {
