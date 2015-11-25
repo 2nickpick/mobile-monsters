@@ -544,6 +544,10 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private void generateTeams() {
 
+        this.characterTeams.clear();
+        this.activePlayerMonsterIndex = 0;
+        this.activeOpponentMonsterIndex = 0;
+
         MonsterType bug = new MonsterType("Bug");
         MonsterType fire = new MonsterType("Fire");
         MonsterType water = new MonsterType("Water");
@@ -1367,14 +1371,18 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         float STAB = monster.getTypes().indexOf(attack.getType()) >= 0 ? 1.5f : 1;
         int randomNumber = (new Random()).nextInt(100 - 85 + 1) + 85;
 
-        float effectiveness = 1f; // TODO: calculate effectiveness, Weakness/Resistance
+        float effectiveness = 1f;
         for(MonsterType type : targetMonster.getTypes()) {
-            if(type.getWeaknesses().indexOf(type) >= 0) {
+            if(type.getWeaknesses().indexOf(attack.getType().getName()) >= 0) {
                 effectiveness *= 2;
             }
 
-            if(type.getResistances().indexOf(type) >= 0) {
+            if(type.getResistances().indexOf(attack.getType().getName()) >= 0) {
                 effectiveness /= 2;
+            }
+
+            if(type.getImmunities().indexOf(attack.getType().getName()) >= 0) {
+                effectiveness = 0f;
             }
         }
 

@@ -21,6 +21,7 @@ public class MonsterType {
                 this.resistances.add("Fire");
                 this.resistances.add("Grass");
                 this.resistances.add("Bug");
+                this.resistances.add("Ice");
                 break;
             case "Grass":
                 this.weaknesses.add("Fire");
@@ -43,9 +44,98 @@ public class MonsterType {
                 this.resistances.add("Fire");
                 this.resistances.add("Ice");
                 break;
+            case "Normal":
+                this.weaknesses.add("Fighting");
+
+                this.immunities.add("Ghost");
+                break;
+            case "Bug":
+                this.weaknesses.add("Fire");
+                this.weaknesses.add("Flying");
+                this.weaknesses.add("Rock");
+
+                this.resistances.add("Grass");
+                this.resistances.add("Fighting");
+                this.resistances.add("Ground");
+                break;
+            case "Electric":
+                this.weaknesses.add("Ground");
+
+                this.resistances.add("Electric");
+                this.resistances.add("Flying");
+                break;
+            case "Ice":
+                this.weaknesses.add("Fire");
+                this.weaknesses.add("Fighting");
+                this.weaknesses.add("Rock");
+
+                this.resistances.add("Ice");
+                break;
+            case "Fighting":
+                this.weaknesses.add("Psychic");
+                this.weaknesses.add("Flying");
+
+                this.resistances.add("Bug");
+                this.resistances.add("Rock");
+                break;
+            case "Poison":
+                this.weaknesses.add("Psychic");
+                this.weaknesses.add("Ground");
+
+                this.resistances.add("Poison");
+                this.resistances.add("Grass");
+                this.resistances.add("Fighting");
+                this.resistances.add("Bug");
+                break;
+            case "Ground":
+                this.weaknesses.add("Water");
+                this.weaknesses.add("Grass");
+                this.weaknesses.add("Ice");
+
+                this.resistances.add("Poison");
+                this.resistances.add("Rock");
+
+                this.immunities.add("Electric");
+                break;
+            case "Flying":
+                this.weaknesses.add("Electric");
+                this.weaknesses.add("Rock");
+                this.weaknesses.add("Ice");
+
+                this.resistances.add("Grass");
+                this.resistances.add("Fighting");
+                this.resistances.add("Bug");
+
+                this.immunities.add("Ground");
+                break;
+            case "Psychic":
+                this.weaknesses.add("Bug");
+                this.weaknesses.add("Ghost");
+
+                this.resistances.add("Fighting");
+                this.resistances.add("Psychic");
+                break;
+            case "Rock":
+                this.weaknesses.add("Water");
+                this.weaknesses.add("Grass");
+                this.weaknesses.add("Fighting");
+                this.weaknesses.add("Ground");
+
+                this.resistances.add("Normal");
+                this.resistances.add("Fire");
+                this.resistances.add("Poison");
+                this.resistances.add("Flying");
+                break;
+            case "Ghost":
+                this.weaknesses.add("Ghost");
+
+                this.resistances.add("Poison");
+                this.resistances.add("Bug");
+
+                this.immunities.add("Normal");
+                this.immunities.add("Fighting");
+                break;
         }
-        this.resistances = resistances;
-        this.weaknesses = weaknesses;
     }
 
     public String getName() {
@@ -82,5 +172,13 @@ public class MonsterType {
 
     public void setWeaknesses(ArrayList<String> weaknesses) {
         this.weaknesses = weaknesses;
+    }
+
+    public ArrayList<String> getImmunities() {
+        return immunities;
+    }
+
+    public void setImmunities(ArrayList<String> immunities) {
+        this.immunities = immunities;
     }
 }
