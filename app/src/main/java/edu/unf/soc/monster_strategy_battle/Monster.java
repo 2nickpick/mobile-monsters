@@ -8,7 +8,9 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Monster extends GameObject {
@@ -23,10 +25,12 @@ public class Monster extends GameObject {
     private int baseSpeed, currentSpeed;
     private int level = 50;
 
-    private long[] releaseFrameDuration = {100};
-    private long[] attackFrameDuration = {100};
-    private long[] damageFrameDuration = {100};
-    private long[] faintFrameDuration = {100};
+    // 62 frames of animation
+    private long[] releaseFrameDuration = new long[62];
+    private long[] attackFrameDuration = new long[62];
+    private long[] damageFrameDuration = new long[62];
+    private long[] faintFrameDuration = new long[62];
+
     private int[] releaseFrames = {0};
     private int[] attackFrames = {0};
     private int[] damageFrames = {0};
@@ -36,6 +40,11 @@ public class Monster extends GameObject {
 
     public Monster(final float pX, final float pY, final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager) {
         super(pX, pY, textureRegion, vertexBufferObjectManager);
+
+//        Arrays.fill(this.releaseFrameDuration, 10L);
+//        Arrays.fill(this.attackFrameDuration, 10L);
+//        Arrays.fill(this.damageFrameDuration, 10L);
+//        Arrays.fill(this.faintFrameDuration, 10L);
     }
 
     public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks) {
@@ -207,12 +216,13 @@ public class Monster extends GameObject {
         scene.attachChild(this);
 
         if(player) {
-            this.setPosition(75, 325);
+            this.setPosition(40, 280);
+            this.setScaleX(-1);
         } else {
-            this.setPosition(325, 60);
+            this.setPosition(220, 60);
         }
 
-        this.animate(releaseFrameDuration, releaseFrames, true);
+        this.animate(releaseFrameDuration, 0, 61, true);
     }
 
     public void attack() {

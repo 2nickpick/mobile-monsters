@@ -322,7 +322,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 }
             });
 
-            fontTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+            fontTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             sansSmall = FontFactory.createFromAsset(
                     this.getFontManager(),
                     fontTextureAtlas,
@@ -395,50 +395,50 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             this.mPreviewRhydonTexture = TextureRegionFactory.extractFromTexture(rhydonPreviewTexture);
 
 
-            BitmapTextureAtlas alakazamTexture = new BitmapTextureAtlas(this.getTextureManager(), 93, 70,
+            BitmapTextureAtlas alakazamTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mAlakazamTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(alakazamTexture, this.getAssets(),
-                    "graphics/monsters/sprites/alakazam.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas blastoiseTexture = new BitmapTextureAtlas(this.getTextureManager(), 69, 65,
+            BitmapTextureAtlas blastoiseTexture = new BitmapTextureAtlas(this.getTextureManager(), 996, 1134,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mBlastoiseTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(blastoiseTexture, this.getAssets(),
-                    "graphics/monsters/sprites/blastoise.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/beevee.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas charizardTexture = new BitmapTextureAtlas(this.getTextureManager(), 89, 91,
+            BitmapTextureAtlas charizardTexture = new BitmapTextureAtlas(this.getTextureManager(), 1211, 1593,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mCharizardTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(charizardTexture, this.getAssets(),
-                    "graphics/monsters/sprites/charizard.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/pikabro.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas dragoniteTexture = new BitmapTextureAtlas(this.getTextureManager(), 80, 82,
+            BitmapTextureAtlas dragoniteTexture = new BitmapTextureAtlas(this.getTextureManager(), 1029, 1350,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mDragoniteTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(dragoniteTexture, this.getAssets(),
-                    "graphics/monsters/sprites/dragonite.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/nidochu.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas hitmonchanTexture = new BitmapTextureAtlas(this.getTextureManager(), 34, 59,
+            BitmapTextureAtlas hitmonchanTexture = new BitmapTextureAtlas(this.getTextureManager(), 1638, 1764,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mHitmonchanTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(hitmonchanTexture, this.getAssets(),
-                    "graphics/monsters/sprites/hitmonchan.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/boneking.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas raichuTexture = new BitmapTextureAtlas(this.getTextureManager(), 71, 73,
+            BitmapTextureAtlas raichuTexture = new BitmapTextureAtlas(this.getTextureManager(), 1491, 1764,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mRaichuTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(raichuTexture, this.getAssets(),
-                    "graphics/monsters/sprites/raichu.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/golpin.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas rhydonTexture = new BitmapTextureAtlas(this.getTextureManager(), 78, 67,
+            BitmapTextureAtlas rhydonTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mRhydonTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(rhydonTexture, this.getAssets(),
-                    "graphics/monsters/sprites/rhydon.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas venusaurTexture = new BitmapTextureAtlas(this.getTextureManager(), 86, 71,
+            BitmapTextureAtlas venusaurTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mVenusaurTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(venusaurTexture, this.getAssets(),
-                    "graphics/monsters/sprites/venusaur.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas starmieTexture = new BitmapTextureAtlas(this.getTextureManager(), 65, 59,
+            BitmapTextureAtlas starmieTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mStarmieTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(starmieTexture, this.getAssets(),
-                    "graphics/monsters/sprites/starmie.png", 0, 0, 1, 1);
+                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
 
             this.mBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(backgroundTexture);
             this.mBattleBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(battleBackgroundTexture);
