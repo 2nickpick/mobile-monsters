@@ -41,10 +41,10 @@ public class Monster extends GameObject {
     public Monster(final float pX, final float pY, final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager) {
         super(pX, pY, textureRegion, vertexBufferObjectManager);
 
-//        Arrays.fill(this.releaseFrameDuration, 10L);
-//        Arrays.fill(this.attackFrameDuration, 10L);
-//        Arrays.fill(this.damageFrameDuration, 10L);
-//        Arrays.fill(this.faintFrameDuration, 10L);
+//        Arrays.fill(this.releaseFrameDuration, 50L);
+//        Arrays.fill(this.attackFrameDuration, 50L);
+//        Arrays.fill(this.damageFrameDuration, 50L);
+//        Arrays.fill(this.faintFrameDuration, 50L);
     }
 
     public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks) {
@@ -219,14 +219,14 @@ public class Monster extends GameObject {
             this.setPosition(40, 280);
             this.setScaleX(-1);
         } else {
-            this.setPosition(220, 60);
+            this.setPosition(240, 60);
         }
 
-        this.animate(releaseFrameDuration, 0, 61, true);
+        this.animate(50L, true);
     }
 
     public void attack() {
-        this.animate(attackFrameDuration, attackFrames, true);
+        this.animate(50L, true);
     }
 
     public void damage(int damage) {
@@ -236,10 +236,10 @@ public class Monster extends GameObject {
         }
 
         this.currentHP -= damage;
-        this.animate(damageFrameDuration, damageFrames, true);
+        this.animate(50L, true);
 
-        Debug.d(this.getName() + " lost " + damage + "HP!!");
-        Debug.d(this.getName() + "'s current HP: " + currentHP + "");
+        MainActivity.queueGameOutput(this.getName() + " lost " + damage + "HP!!");
+        MainActivity.queueGameOutput(this.getName() + "'s current HP: " + currentHP + "");
 
         if(this.isFainted()) {
             this.currentHP = 0;
@@ -248,8 +248,8 @@ public class Monster extends GameObject {
     }
 
     public void faint() {
-        Debug.d(this.getName() + " fainted!!!");
-        this.animate(faintFrameDuration, faintFrames, true);
+        MainActivity.queueGameOutput(this.getName() + " fainted!!!");
+        this.animate(50L, true);
     }
 
     public int getCurrentAttack() {

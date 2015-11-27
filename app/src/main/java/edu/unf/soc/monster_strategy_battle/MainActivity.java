@@ -99,7 +99,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private MenuScene monsterMenu = new MenuScene();
     private MenuScene victoryMenu = new MenuScene();
     private MenuScene defeatMenu = new MenuScene();
-    private Scene gameOutput = new Scene();
     private Scene nextChildScene = new Scene();
 
     private Music menuMusic;
@@ -130,10 +129,9 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private Text activePlayerMonsterHP;
 
     private boolean startNextTurn; //whether or not next turn is interrupted by game state
-    private Text gameOutputText;
-    private int gameOutputTextCounter = 0;
 
-    private ArrayList<String> gameOutputQueue = new ArrayList<>();
+    private static ArrayList<String> gameOutputQueue = new ArrayList<>();
+
     @Override
     protected void onCreateResources() {
         try {
@@ -425,20 +423,20 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             this.mRaichuTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(raichuTexture, this.getAssets(),
                     "graphics/monsters/sprites/golpin.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas rhydonTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
+            BitmapTextureAtlas rhydonTexture = new BitmapTextureAtlas(this.getTextureManager(), 1561, 1242,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mRhydonTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(rhydonTexture, this.getAssets(),
-                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
+                    "graphics/monsters/sprites/rhyter.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas venusaurTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
+            BitmapTextureAtlas venusaurTexture = new BitmapTextureAtlas(this.getTextureManager(), 875, 1188,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mVenusaurTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(venusaurTexture, this.getAssets(),
-                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
+                    "graphics/monsters/sprites/scykans.png", 0, 0, 7, 9);
 
-            BitmapTextureAtlas starmieTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
+            BitmapTextureAtlas starmieTexture = new BitmapTextureAtlas(this.getTextureManager(), 1218, 1395,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mStarmieTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(starmieTexture, this.getAssets(),
-                    "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
+                    "graphics/monsters/sprites/oddsect.png", 0, 0, 7, 9);
 
             this.mBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(backgroundTexture);
             this.mBattleBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(battleBackgroundTexture);
@@ -587,6 +585,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Attack iceBeam = new Attack("Ice Beam", 90, 100, ice);
         Attack dragonRage = new Attack("Dragon Rage", 90, 100, dragon);
         Attack swift = new Attack("Swift", 90, 100, normal);
+        Attack signalBeam = new Attack("Signal Beam", 90, 100, bug);
         Attack strength = new Attack("Strength", 90, 100, normal);
         Attack solarBeam = new Attack("Solar Beam", 90, 100, grass);
         Attack sludgeBomb = new Attack("Sludge Bomb", 90, 100, poison);
@@ -713,7 +712,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         rhydonAttacks.add(earthquake);
         rhydonAttacks.add(stoneEdge);
         rhydonAttacks.add(strength);
-        rhydonAttacks.add(surf);
+        rhydonAttacks.add(signalBeam);
 
         Monster rhydon = new Monster(
                 this.mRhydonTexture,
@@ -995,67 +994,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         return this.defeatMenu;
     }
 
-    private Scene createGameOutput() {
-        this.gameOutput = new Scene();
-        this.gameOutput.setX(0);
-        this.gameOutput.setY(160);
-
-        Rectangle gameOutputBox = new Rectangle(
-            10,
-            700,
-            this.mCamera.getWidth() - 20,
-            90,
-            getVertexBufferObjectManager()
-        );
-        gameOutputBox.setAlpha(0.6f);
-        gameOutputBox.setColor(0f, 0f, 0f);
-
-        this.gameOutputText = new Text(
-            15,
-            15,
-            sansSmall,
-            "This is my really long game output in case I need it.",
-            getVertexBufferObjectManager()
-        );
-
-        this.gameOutputText.registerUpdateHandler(new TimerHandler(0.1f, true, new ITimerCallback() {
-            @Override
-            public void onTimePassed(TimerHandler pTimerHandler) {
-                if(gameOutputQueue.isEmpty()) {
-                    if(nextChildScene != null) {
-                        gameOutput.setVisible(false);
-                        gameOutput.setIgnoreUpdate(true);
-                        gameScene.setChildScene(nextChildScene);
-                        nextChildScene = null;
-                    }
-                } else {
-                    // draw the next frame
-                    if (gameOutputTextCounter < gameOutputQueue.get(0).length()) {
-                        gameOutputText.setText(gameOutputQueue.get(0).substring(0, gameOutputTextCounter));
-                        gameOutputTextCounter++;
-                    }
-
-                    // if the string is done, load up the next one
-                    if(gameOutputTextCounter >= gameOutputQueue.get(0).length()) {
-                        gameOutputQueue.remove(0);
-                    }
-                }
-            }
-        }));
-
-        gameOutputBox.attachChild(gameOutputText);
-        this.gameScene.attachChild(gameOutputBox);
-        this.gameOutput.setVisible(false);
-        this.gameOutput.setIgnoreUpdate(true);
-
-        return this.gameOutput;
-    }
-
     public void drawGameOutputQueue() {
 
-        this.gameScene.setChildScene(gameOutput);
-        this.gameOutput.setVisible(true);
-        this.gameOutput.setIgnoreUpdate(false);
 
     }
 
@@ -1092,7 +1032,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.attackMenu.setBackgroundEnabled(false);
 
         this.attackMenu.setOnMenuItemClickListener(this);
-        this.nextChildScene = attackMenu;
+        this.setNextChildScene(attackMenu);
     }
 
     public void setupMonsterMenu(boolean exit) {
@@ -1140,7 +1080,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.monsterMenu.setBackgroundEnabled(false);
 
         this.monsterMenu.setOnMenuItemClickListener(this);
-        this.nextChildScene = monsterMenu;
+        this.setNextChildScene(monsterMenu);
     }
 
     public Scene onCreateBattleScene() {
@@ -1150,7 +1090,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.createMonsterMenu();
         this.createVictoryMenu();
         this.createDefeatMenu();
-        this.createGameOutput();
 
         this.opponentIndex = (new Random()).nextInt(this.characterTeams.size());
         while(this.opponentIndex == this.playerIndex) {
@@ -1176,8 +1115,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.gameScene.attachChild(this.activePlayerMonsterHP);
         this.gameScene.attachChild(this.activeOpponentMonsterName);
         this.gameScene.attachChild(this.activeOpponentMonsterLevel);
-
-        this.drawGameOutputQueue();
 
         return this.gameScene;
     }
@@ -1219,8 +1156,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     @Override
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
-
-        this.drawGameOutputQueue();
 
         menuCursorSound.play();
         switch(pMenuItem.getID())
@@ -1267,7 +1202,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
                 this.onCreateBattleScene();
 
-                this.nextChildScene = this.battleMenu;
+                this.setNextChildScene(this.battleMenu);
 
                 battleMusic.seekTo(0);
                 battleMusic.play();
@@ -1317,7 +1252,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 // process the turn
                 boolean monsterSwitched = pMenuItem.getID() == 14;
 
-                boolean forcedSwitch = false;
                 if(monsterSwitched) {
                     // chose a monster to switch to
                     this.switchMonster(
@@ -1389,18 +1323,15 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                     }
                 }
 
-                // start next turn
-                this.drawGameOutputQueue();
-
                 if(this.startNextTurn) {
-                    this.nextChildScene = battleMenu;
+                    this.setNextChildScene(battleMenu);
                 }
 
                 break;
 
             case 13:
                 // return from the attack or monster menu
-                this.nextChildScene = battleMenu;
+                this.setNextChildScene(battleMenu);
                 break;
 
             case 15:
@@ -1411,7 +1342,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                         true
                 );
 
-                this.nextChildScene = battleMenu;
+                this.setNextChildScene(battleMenu);
 
             default:
                 break;
@@ -1427,7 +1358,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 .get(attackIndex);
 
         // chose an attack
-        this.gameOutputQueue.add((player ? "Player " : "Opponent ") + " used: " + attack.getName());
+        queueGameOutput((player ? "Player " : "Opponent ") + " used: " + attack.getName());
 
 //        Damage Calculations
 //        http://www.serebii.net/games/damage.shtml
@@ -1467,15 +1398,15 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         }
 
         if(effectiveness > 1f) {
-            this.gameOutputQueue.add("It's super effective!" + effectiveness);
+            queueGameOutput("It's super effective!" + effectiveness);
         } else if(effectiveness == 0) {
-            this.gameOutputQueue.add("It's does not affect..." + effectiveness);
+            queueGameOutput("It's does not affect..." + effectiveness);
         } else if(effectiveness < 1f) {
-            this.gameOutputQueue.add("It's not very effective..." + effectiveness);
+            queueGameOutput("It's not very effective..." + effectiveness);
         }
 
         if(criticalHit == 2) {
-            this.gameOutputQueue.add("Critical Hit");
+            queueGameOutput("Critical Hit");
         }
 
         // put damage on the opponent monster
@@ -1493,13 +1424,13 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 int mustSwitchMonster = this.opponentMustSwitchMonster();
                 if(mustSwitchMonster == -1) {
                     //handle victory
-                    this.gameOutputQueue.add("Victory!!!");
+                    queueGameOutput("Victory!!!");
                     battleMusic.pause();
                     victoryMusic.seekTo(0);
                     victoryMusic.play();
 
                     this.startNextTurn = false;
-                    this.nextChildScene = victoryMenu;
+                    this.setNextChildScene(victoryMenu);
                 } else {
                     this.switchMonster(mustSwitchMonster, activeOpponentMonsterIndex, false);
                 }
@@ -1510,13 +1441,13 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                     this.gameScene.setChildScene(monsterMenu);
                 } else {
                     //handle defeat
-                    this.gameOutputQueue.add("Defeat!!!");
+                    queueGameOutput("Defeat!!!");
                     battleMusic.pause();
                     defeatMusic.seekTo(0);
                     defeatMusic.play();
 
                     this.startNextTurn = false;
-                    this.nextChildScene = defeatMenu;
+                    this.setNextChildScene(defeatMenu);
                 }
             }
         }
@@ -1549,7 +1480,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         this.updateMonsterInformation(newMonsterIndex, player);
 
-        this.gameOutputQueue.add((player ? "Player " : "Opponent ") + "Switched to: " +
+        queueGameOutput((player ? "Player " : "Opponent ") + "Switched to: " +
                 this.characterTeams
                         .get(switchingPlayerIndex)
                         .get( newMonsterIndex ));
@@ -1571,6 +1502,16 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         }
 
         return true;
+    }
+
+    public static void queueGameOutput(String gameOutputText) {
+        gameOutputQueue.add(gameOutputText);
+        Debug.d("Game Output", gameOutputText);
+    }
+
+    public void setNextChildScene(Scene nextChildScene) {
+        this.nextChildScene = nextChildScene;
+        this.gameScene.setChildScene(nextChildScene);
     }
 
     @Override
