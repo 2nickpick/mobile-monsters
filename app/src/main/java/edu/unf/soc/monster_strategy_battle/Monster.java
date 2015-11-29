@@ -26,10 +26,20 @@ public class Monster extends GameObject {
     private int level = 50;
 
     // 62 frames of animation
-    private long[] releaseFrameDuration = new long[62];
-    private long[] attackFrameDuration = new long[62];
-    private long[] damageFrameDuration = new long[62];
-    private long[] faintFrameDuration = new long[62];
+    private long[] releaseFrameDuration = new long[] {
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L, 50L,
+            50L, 50L, 50L, 50L, 50L, 50L
+    };
+    private long[] attackFrameDuration = new long[3];
+    private long[] damageFrameDuration = new long[3];
+    private long[] faintFrameDuration = new long[3];
 
     private int[] releaseFrames = {0};
     private int[] attackFrames = {0};
@@ -41,7 +51,7 @@ public class Monster extends GameObject {
     public Monster(final float pX, final float pY, final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager) {
         super(pX, pY, textureRegion, vertexBufferObjectManager);
 
-//        Arrays.fill(this.releaseFrameDuration, 50L);
+        Arrays.fill(this.releaseFrameDuration, 50L);
 //        Arrays.fill(this.attackFrameDuration, 50L);
 //        Arrays.fill(this.damageFrameDuration, 50L);
 //        Arrays.fill(this.faintFrameDuration, 50L);
@@ -216,17 +226,17 @@ public class Monster extends GameObject {
         scene.attachChild(this);
 
         if(player) {
-            this.setPosition(40, 280);
+            this.setPosition(150 - this.getWidth()/2f, 280);
             this.setScaleX(-1);
         } else {
-            this.setPosition(240, 60);
+            this.setPosition(350 - this.getWidth()/2f, 60);
         }
 
-        this.animate(50L, true);
+        this.animate(releaseFrameDuration, 0, 61, true);
     }
 
     public void attack() {
-        this.animate(50L, true);
+        this.animate(releaseFrameDuration, 0, 61, true);
     }
 
     public void damage(int damage) {
@@ -236,7 +246,7 @@ public class Monster extends GameObject {
         }
 
         this.currentHP -= damage;
-        this.animate(50L, true);
+        this.animate(releaseFrameDuration, 0, 61, true);
 
         MainActivity.queueGameOutput(this.getName() + " lost " + damage + "HP!!");
         MainActivity.queueGameOutput(this.getName() + "'s current HP: " + currentHP + "");
@@ -249,7 +259,7 @@ public class Monster extends GameObject {
 
     public void faint() {
         MainActivity.queueGameOutput(this.getName() + " fainted!!!");
-        this.animate(50L, true);
+        this.animate(releaseFrameDuration, 0, 61, true);
     }
 
     public int getCurrentAttack() {

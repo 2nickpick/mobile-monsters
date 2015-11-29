@@ -49,7 +49,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     public static int CAMERA_WIDTH = 480;
     public static int CAMERA_HEIGHT = 800;
 
-    private Camera mCamera;
+    public Camera mCamera;
 
     private ITextureRegion mBackgroundTextureRegion;
     private ITextureRegion mBattleBackgroundTextureRegion;
@@ -93,7 +93,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private int opponentIndex;
     private int activeOpponentMonsterIndex = 0;
 
-    private Scene gameScene = new Scene();
+    public Scene gameScene = new Scene();
     private MenuScene battleMenu = new MenuScene();
     private MenuScene attackMenu = new MenuScene();
     private MenuScene monsterMenu = new MenuScene();
@@ -130,7 +130,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private boolean startNextTurn; //whether or not next turn is interrupted by game state
 
-    private static ArrayList<String> gameOutputQueue = new ArrayList<>();
+    public static ArrayList<String> gameOutputQueue = new ArrayList<>();
 
     @Override
     protected void onCreateResources() {
@@ -600,7 +600,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster charizard = new Monster(
                 this.mCharizardTexture,
                 this.getVertexBufferObjectManager(),
-                "Charizard",
+                "Slugspark",
                 charizardTypes,
                 charizardAttacks
         );
@@ -614,7 +614,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster raichu = new Monster(
                 this.mRaichuTexture,
                 this.getVertexBufferObjectManager(),
-                "Raichu",
+                "Golpin",
                 raichuTypes,
                 raichuAttacks
         );
@@ -629,7 +629,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster starmie = new Monster(
                 this.mStarmieTexture,
                 this.getVertexBufferObjectManager(),
-                "Starmie",
+                "Oddsect",
                 starmieTypes,
                 starmieAttacks
         );
@@ -646,7 +646,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster blastoise = new Monster(
                 this.mBlastoiseTexture,
                 this.getVertexBufferObjectManager(),
-                "Blastoise",
+                "Beevee",
                 blastoiseTypes,
                 blastoiseAttacks
         );
@@ -663,7 +663,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster alakazam = new Monster(
                 this.mAlakazamTexture,
                 this.getVertexBufferObjectManager(),
-                "Alakazam",
+                "Jynchamp",
                 alakazamTypes,
                 alakazamAttacks
         );
@@ -680,7 +680,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster hitmonchan = new Monster(
                 this.mHitmonchanTexture,
                 this.getVertexBufferObjectManager(),
-                "Hitmonchan",
+                "Boneking",
                 hitmonchanTypes,
                 hitmonchanAttacks
         );
@@ -699,7 +699,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster venusaur = new Monster(
                 this.mVenusaurTexture,
                 this.getVertexBufferObjectManager(),
-                "Venusaur",
+                "Scykans",
                 venusaurTypes,
                 venusaurAttacks
         );
@@ -717,7 +717,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster rhydon = new Monster(
                 this.mRhydonTexture,
                 this.getVertexBufferObjectManager(),
-                "Rhydon",
+                "Rhyter",
                 rhydonTypes,
                 rhydonAttacks
         );
@@ -735,7 +735,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Monster dragonite = new Monster(
                 this.mDragoniteTexture,
                 this.getVertexBufferObjectManager(),
-                "Dragonite",
+                "Ridochan",
                 dragoniteTypes,
                 dragoniteAttacks
         );
@@ -996,6 +996,14 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     public void drawGameOutputQueue() {
 
+        OutputScene outputScene = null;
+        if(!gameOutputQueue.isEmpty()) {
+            outputScene = new OutputScene(gameOutputQueue.remove(0), this, sansSmall);
+            this.gameScene.setChildScene(outputScene);
+        } else {
+            this.gameScene.setChildScene(nextChildScene);
+        }
+
 
     }
 
@@ -1202,7 +1210,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
                 this.onCreateBattleScene();
 
-                this.setNextChildScene(this.battleMenu);
+                this.setNextChildScene(battleMenu);
 
                 battleMusic.seekTo(0);
                 battleMusic.play();
@@ -1348,6 +1356,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 break;
         }
 
+        this.drawGameOutputQueue();
+
         return true;
     }
 
@@ -1438,7 +1448,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 if(!playerDefeated()) {
                     this.startNextTurn = false;
                     this.setupMonsterMenu(false);
-                    this.gameScene.setChildScene(monsterMenu);
+                    this.setNextChildScene(monsterMenu);
                 } else {
                     //handle defeat
                     queueGameOutput("Defeat!!!");
@@ -1511,7 +1521,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     public void setNextChildScene(Scene nextChildScene) {
         this.nextChildScene = nextChildScene;
-        this.gameScene.setChildScene(nextChildScene);
     }
 
     @Override
