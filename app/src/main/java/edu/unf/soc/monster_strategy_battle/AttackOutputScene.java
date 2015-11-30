@@ -28,6 +28,12 @@ public class AttackOutputScene extends OutputScene {
 
         monster.attack(player);
 
+        targetMonster.damage(!player);
+
+        mainActivity.updateMonsterInformation(
+            targetMonster,
+            !player
+        );
 
         this.animating = false;
 

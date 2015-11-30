@@ -8,6 +8,7 @@ import org.andengine.entity.modifier.FadeInModifier;
 import org.andengine.entity.modifier.FadeOutModifier;
 import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.SequenceEntityModifier;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.text.Text;
@@ -242,6 +243,16 @@ public class Monster extends GameObject {
         this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
         this.registerEntityModifier(new AlphaModifier(1.5f, 0, 1));
 
+        Rectangle monsterHPBar = player ? mainActivity.activePlayerMonsterHPBar : mainActivity.activeOpponentMonsterHPBar;
+
+        monsterHPBar.setWidth((float)this.currentHP / this.maxHP * 96);
+
+        if(!this.isInDanger()) {
+            monsterHPBar.setColor(0, 1, 0);
+        } else {
+            monsterHPBar.setColor(1, 0, 0);
+        }
+
         if(player) {
             this.setPosition(150 - this.getWidth()/2f, 280);
             this.setScaleX(-1);
@@ -266,7 +277,7 @@ public class Monster extends GameObject {
 
     }
 
-    public void damage() {
+    public void damage(final boolean player) {
 
         final LoopEntityModifier blinker =
                 new LoopEntityModifier(
@@ -278,9 +289,9 @@ public class Monster extends GameObject {
 
         this.registerEntityModifier(blinker);
 
-        if( this.isInDanger() ) {
-            this.danger();
-        }
+        final Rectangle monsterHPBar = player ? mainActivity.activePlayerMonsterHPBar : mainActivity.activeOpponentMonsterHPBar;
+        final float desiredHPBarWidth = (float) currentHP / maxHP * 96;
+        monsterHPBar.setWidth(desiredHPBarWidth);
     }
 
     public void takeDamage(int damage, boolean player) {
@@ -308,8 +319,15 @@ public class Monster extends GameObject {
         return this.currentHP < Math.round(this.maxHP / 4) && this.currentHP > 0;
     }
 
-    public void danger() {
+    public void danger(boolean player) {
         this.setColor(1f, 125f / 255, 125f / 255);
+
+        if(player) {
+            mainActivity.activePlayerMonsterHPBar.setColor(1, 0, 0);
+        } else {
+            mainActivity.activeOpponentMonsterHPBar.setColor(1, 0, 0);
+        }
+
     }
 
     public int getCurrentAttack() {
