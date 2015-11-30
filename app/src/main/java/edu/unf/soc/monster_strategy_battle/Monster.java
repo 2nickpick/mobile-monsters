@@ -1,5 +1,6 @@
 package edu.unf.soc.monster_strategy_battle;
 
+import org.andengine.audio.sound.Sound;
 import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -35,8 +36,10 @@ public class Monster extends GameObject {
     private int baseSpeed, currentSpeed;
     private int level = 50;
 
+    private Sound cry;
+
     // 62 frames of animation
-    private long[] releaseFrameDuration = new long[] {
+    public static long[] releaseFrameDuration = new long[] {
             50L, 50L, 50L, 50L, 50L, 50L, 50L,
             50L, 50L, 50L, 50L, 50L, 50L, 50L,
             50L, 50L, 50L, 50L, 50L, 50L, 50L,
@@ -62,20 +65,16 @@ public class Monster extends GameObject {
 
     public Monster(final float pX, final float pY, final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager) {
         super(pX, pY, textureRegion, vertexBufferObjectManager);
-
-//        Arrays.fill(this.releaseFrameDuration, 50L);
-//        Arrays.fill(this.attackFrameDuration, 50L);
-//        Arrays.fill(this.damageFrameDuration, 50L);
-//        Arrays.fill(this.faintFrameDuration, 50L);
     }
 
-    public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks, MainActivity mainActivity) {
+    public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks, Sound cry, MainActivity mainActivity) {
         super(0, 0, textureRegion, vertexBufferObjectManager);
         this.name = name;
         this.types = types;
         this.attacks = attacks;
         this.preview = textureRegion;
         this.mainActivity = mainActivity;
+        this.cry = cry;
         this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         // setup stats based on monster name
@@ -238,6 +237,7 @@ public class Monster extends GameObject {
     public void release(Scene scene, boolean player) {
         this.detachSelf();
         scene.attachChild(this);
+        this.cry();
 
         this.clearEntityModifiers();
         this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -264,6 +264,7 @@ public class Monster extends GameObject {
     }
 
     public void recall(Scene scene, boolean player) {
+        this.cry();
 
         this.clearEntityModifiers();
         this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -273,11 +274,17 @@ public class Monster extends GameObject {
     public void attack(boolean player) {
 
         //attack animation
-        this.animate(releaseFrameDuration, 0, 61, true);
+//        this.animate(releaseFrameDuration, 0, 61, true);
 
     }
 
-    public void damage(final boolean player) {
+    public void damage(boolean critical, final boolean player) {
+
+        if(critical) {
+            mainActivity.criticalSound.play();
+        } else {
+            mainActivity.damageSound.play();
+        }
 
         final LoopEntityModifier blinker =
                 new LoopEntityModifier(
@@ -311,6 +318,7 @@ public class Monster extends GameObject {
     }
 
     public void faint(boolean player) {
+        this.cry();
         this.clearEntityModifiers();
         this.registerEntityModifier(new AlphaModifier(1.5f, 0, 255));
     }
@@ -376,5 +384,9 @@ public class Monster extends GameObject {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public void cry() {
+        cry.play();
     }
 }

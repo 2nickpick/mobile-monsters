@@ -11,8 +11,6 @@ import org.andengine.audio.music.MusicFactory;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.timer.ITimerCallback;
-import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -23,6 +21,7 @@ import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.font.Font;
@@ -42,7 +41,6 @@ import org.andengine.util.debug.Debug;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IOnMenuItemClickListener {
@@ -111,16 +109,16 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private Font comicSansFull, comicSansH1, comicSansH2, sansSmall;
 
     private ArrayList<ArrayList<Monster>> characterTeams = new ArrayList<>();
-    private TiledTextureRegion mCharizardTexture;
-    private TiledTextureRegion mRaichuTexture;
-    private TiledTextureRegion mStarmieTexture;
+    private TiledTextureRegion mSlugsparkTexture;
+    private TiledTextureRegion mGolpinTexture;
+    private TiledTextureRegion mOddsectTexture;
 
-    private TiledTextureRegion mBlastoiseTexture;
-    private TiledTextureRegion mAlakazamTexture;
-    private TiledTextureRegion mHitmonchanTexture;
+    private TiledTextureRegion mBeeveeTexture;
+    private TiledTextureRegion mJynchampTexture;
+    private TiledTextureRegion mBonekingTexture;
 
-    private TiledTextureRegion mVenusaurTexture;
-    private TiledTextureRegion mDragoniteTexture;
+    private TiledTextureRegion mScykansTexture;
+    private TiledTextureRegion mRidochanTexture;
     private TiledTextureRegion mRhydonTexture;
 
     private Text activeOpponentMonsterName;
@@ -134,6 +132,17 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     public static ArrayList<OutputScene> gameOutputQueue = new ArrayList<>();
     public Rectangle activePlayerMonsterHPBar;
     public Rectangle activeOpponentMonsterHPBar;
+    public Sound damageSound;
+    public Sound criticalSound;
+    private Sound beeveeSound;
+    private Sound bonekingSound;
+    private Sound golpinSound;
+    private Sound jynchampSound;
+    private Sound oddsectSound;
+    private Sound rhyterSound;
+    private Sound ridochanSound;
+    private Sound scykansSound;
+    private Sound slugsparkSound;
 
     @Override
     protected void onCreateResources() {
@@ -329,7 +338,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                     fontTextureAtlas,
                     this.getAssets(),
                     "fonts/sans.ttf",
-                    18f,
+                    14f,
                     true,
                     Color.WHITE
             );
@@ -345,16 +354,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             );
 
             comicSansH1 = FontFactory.createFromAsset(
-                    this.getFontManager(),
-                    fontTextureAtlas,
-                    this.getAssets(),
-                    "fonts/comicsans.ttf",
-                    38f,
-                    true,
-                    Color.WHITE
-            );
-
-            comicSansH2 = FontFactory.createFromAsset(
                     this.getFontManager(),
                     fontTextureAtlas,
                     this.getAssets(),
@@ -398,32 +397,32 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             BitmapTextureAtlas alakazamTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mAlakazamTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(alakazamTexture, this.getAssets(),
+            this.mJynchampTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(alakazamTexture, this.getAssets(),
                     "graphics/monsters/sprites/jynchamp.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas blastoiseTexture = new BitmapTextureAtlas(this.getTextureManager(), 996, 1134,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mBlastoiseTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(blastoiseTexture, this.getAssets(),
+            this.mBeeveeTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(blastoiseTexture, this.getAssets(),
                     "graphics/monsters/sprites/beevee.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas charizardTexture = new BitmapTextureAtlas(this.getTextureManager(), 1211, 1593,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mCharizardTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(charizardTexture, this.getAssets(),
+            this.mSlugsparkTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(charizardTexture, this.getAssets(),
                     "graphics/monsters/sprites/pikabro.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas dragoniteTexture = new BitmapTextureAtlas(this.getTextureManager(), 1029, 1350,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mDragoniteTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(dragoniteTexture, this.getAssets(),
+            this.mRidochanTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(dragoniteTexture, this.getAssets(),
                     "graphics/monsters/sprites/nidochu.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas hitmonchanTexture = new BitmapTextureAtlas(this.getTextureManager(), 1638, 1764,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mHitmonchanTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(hitmonchanTexture, this.getAssets(),
+            this.mBonekingTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(hitmonchanTexture, this.getAssets(),
                     "graphics/monsters/sprites/boneking.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas raichuTexture = new BitmapTextureAtlas(this.getTextureManager(), 1491, 1764,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mRaichuTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(raichuTexture, this.getAssets(),
+            this.mGolpinTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(raichuTexture, this.getAssets(),
                     "graphics/monsters/sprites/golpin.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas rhydonTexture = new BitmapTextureAtlas(this.getTextureManager(), 1561, 1242,
@@ -433,12 +432,12 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             BitmapTextureAtlas venusaurTexture = new BitmapTextureAtlas(this.getTextureManager(), 875, 1188,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mVenusaurTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(venusaurTexture, this.getAssets(),
+            this.mScykansTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(venusaurTexture, this.getAssets(),
                     "graphics/monsters/sprites/scykans.png", 0, 0, 7, 9);
 
             BitmapTextureAtlas starmieTexture = new BitmapTextureAtlas(this.getTextureManager(), 1218, 1395,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-            this.mStarmieTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(starmieTexture, this.getAssets(),
+            this.mOddsectTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(starmieTexture, this.getAssets(),
                     "graphics/monsters/sprites/oddsect.png", 0, 0, 7, 9);
 
             this.mBackgroundTextureRegion = TextureRegionFactory.extractFromTexture(backgroundTexture);
@@ -489,7 +488,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             sansSmall.load();
             comicSansFull.load();
             comicSansH1.load();
-            comicSansH2.load();
 
             // music
             menuMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music/menu.mp3");
@@ -510,6 +508,17 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             // sounds
             menuCursorSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/menu.wav");
+            damageSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/damage.wav");
+            criticalSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/critical.wav");
+            beeveeSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/beevee.wav");
+            bonekingSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/boneking.wav");
+            golpinSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/golpin.wav");
+            jynchampSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/jynchamp.wav");
+            oddsectSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/oddsect.wav");
+            rhyterSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/rhyter.wav");
+            scykansSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/scykans.wav");
+            ridochanSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/ridochan.wav");
+            slugsparkSound = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "sounds/slugspark.wav");
 
         } catch (IOException e) {
             Debug.e(e);
@@ -592,180 +601,231 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Attack strength = new Attack("Strength", 90, 100, normal);
         Attack solarBeam = new Attack("Solar Beam", 90, 100, grass);
         Attack sludgeBomb = new Attack("Sludge Bomb", 90, 100, poison);
+        Attack electricHug = new Attack("Electric Hug", 70, 100, electric);
+        Attack wetHug = new Attack("Wet Hug", 70, 100, water);
+        Attack confusingGrin = new Attack("Confusing Grin", 75, 100, psychic);
+        Attack tailSmack = new Attack("Tail Smack", 85, 100, normal);
+        Attack venomousCrunch = new Attack("Venomous Crunch", 95, 100, poison);
+        Attack pinch = new Attack("Pinch", 80, 100, bug);
+        Attack bite = new Attack("Bite", 70, 100, normal);
+        Attack rockThrow = new Attack("Rock Throw", 90, 80, normal);
+        Attack slimySpit = new Attack("Slimy Spit", 65, 100, water);
+        Attack sourScent = new Attack("Sour Scent", 90, 100, grass);
+        Attack burrow = new Attack("Burrow", 75, 100, ground);
+        Attack mindControl = new Attack("Burrow", 100, 100, psychic);
+        Attack spook = new Attack("Spook", 95, 100, ghost);
+        Attack chargeBlast = new Attack("Charge Blast", 95, 100, electric);
+        Attack icyStare = new Attack("Icy Stare", 95, 100, ice);
+        Attack noogie = new Attack("Noogie", 80, 100, fighting);
+        Attack terribleSinging = new Attack("Terrible Singing", 85, 100, psychic);
+        Attack bearHug = new Attack("Bear Hug", 70, 100, normal);
+        Attack stopDropAndRoll = new Attack("Stop, Drop and Roll", 70, 100, fire);
+        Attack bonesaber = new Attack("Bonesaber", 100, 100, ground);
+        Attack liftedMountain = new Attack("Lifted Mountain", 100, 100, rock);
+        Attack staticSockRub = new Attack("Static Sock Rub", 70, 100, electric);
+        Attack doggyPile = new Attack("Doggy Pile", 85, 100, fighting);
+        Attack scatterThorns = new Attack("Scatter Thorns", 60, 100, grass);
+        Attack hiss = new Attack("Hiss", 60, 100, normal);
+        Attack wallSneak = new Attack("Wall Sneak", 70, 100, ghost);
+        Attack wallSmash = new Attack("Wall Smash", 80, 100, rock);
+        Attack hornDrill = new Attack("Horn Drill", 60, 100, ground);
+        Attack tapShoulder = new Attack("Tap Shoulder", 50, 100, normal);
+        Attack yearsOfDragon = new Attack("1000 Years of Dragon", 110, 100, dragon);
+        Attack hellfire = new Attack("Hellfire", 110, 100, fire);
+        Attack mentalPrison = new Attack("Mental Prison", 95, 100, psychic);
+        Attack walkAway = new Attack("Walk Away", 10, 100, normal);
 
-        ArrayList<MonsterType> charizardTypes = new ArrayList<>();
-        charizardTypes.add(fire);
-        charizardTypes.add(flying);
+        ArrayList<MonsterType> slugsparkTypes = new ArrayList<>();
+        slugsparkTypes.add(electric);
+        slugsparkTypes.add(water);
 
-        ArrayList<Attack> charizardAttacks = new ArrayList<>();
-        charizardAttacks.add(flamethrower);
-        charizardAttacks.add(wingAttack);
-        Monster charizard = new Monster(
-                this.mCharizardTexture,
+        ArrayList<Attack> slugsparkAttacks = new ArrayList<>();
+        slugsparkAttacks.add(electricHug);
+        slugsparkAttacks.add(wetHug);
+        slugsparkAttacks.add(confusingGrin);
+        slugsparkAttacks.add(tailSmack);
+
+        Monster slugspark = new Monster(
+                this.mSlugsparkTexture,
                 this.getVertexBufferObjectManager(),
                 "Slugspark",
-                charizardTypes,
-                charizardAttacks,
+                slugsparkTypes,
+                slugsparkAttacks,
+                slugsparkSound,
                 this
         );
 
-        ArrayList<MonsterType> raichuTypes = new ArrayList<>();
-        raichuTypes.add(electric);
+        ArrayList<MonsterType> golpinTypes = new ArrayList<>();
+        golpinTypes.add(bug);
+        golpinTypes.add(poison);
 
-        ArrayList<Attack> raichuAttacks = new ArrayList<>();
-        raichuAttacks.add(thunderbolt);
-        raichuAttacks.add(wingAttack);
-        Monster raichu = new Monster(
-                this.mRaichuTexture,
+        ArrayList<Attack> golpinAttacks = new ArrayList<>();
+        golpinAttacks.add(venomousCrunch);
+        golpinAttacks.add(pinch);
+        golpinAttacks.add(bite);
+        golpinAttacks.add(rockThrow);
+        Monster golpin = new Monster(
+                this.mGolpinTexture,
                 this.getVertexBufferObjectManager(),
                 "Golpin",
-                raichuTypes,
-                raichuAttacks,
+                golpinTypes,
+                golpinAttacks,
+                golpinSound,
                 this
         );
 
-        ArrayList<MonsterType> starmieTypes = new ArrayList<>();
-        starmieTypes.add(water);
-        starmieTypes.add(psychic);
+        ArrayList<MonsterType> oddsectTypes = new ArrayList<>();
+        oddsectTypes.add(water);
+        oddsectTypes.add(grass);
 
-        ArrayList<Attack> starmieAttacks = new ArrayList<>();
-        starmieAttacks.add(surf);
-        starmieAttacks.add(psychicAttack);
-        Monster starmie = new Monster(
-                this.mStarmieTexture,
+        ArrayList<Attack> oddsectAttacks = new ArrayList<>();
+        oddsectAttacks.add(slimySpit);
+        oddsectAttacks.add(sourScent);
+        oddsectAttacks.add(pinch);
+        oddsectAttacks.add(burrow);
+        Monster oddsect = new Monster(
+                this.mOddsectTexture,
                 this.getVertexBufferObjectManager(),
                 "Oddsect",
-                starmieTypes,
-                starmieAttacks,
+                oddsectTypes,
+                oddsectAttacks,
+                oddsectSound,
                 this
         );
 
-        ArrayList<MonsterType> blastoiseTypes = new ArrayList<>();
-        blastoiseTypes.add(water);
+        ArrayList<MonsterType> beeveeTypes = new ArrayList<>();
+        beeveeTypes.add(psychic);
 
-        ArrayList<Attack> blastoiseAttacks = new ArrayList<>();
-        blastoiseAttacks.add(surf);
-        blastoiseAttacks.add(iceBeam);
-        blastoiseAttacks.add(strength);
-        blastoiseAttacks.add(earthquake);
+        ArrayList<Attack> beeveeAttacks = new ArrayList<>();
+        beeveeAttacks.add(mindControl);
+        beeveeAttacks.add(chargeBlast);
+        beeveeAttacks.add(spook);
+        beeveeAttacks.add(icyStare);
 
-        Monster blastoise = new Monster(
-                this.mBlastoiseTexture,
+        Monster beevee = new Monster(
+                this.mBeeveeTexture,
                 this.getVertexBufferObjectManager(),
                 "Beevee",
-                blastoiseTypes,
-                blastoiseAttacks,
+                beeveeTypes,
+                beeveeAttacks,
+                beeveeSound,
                 this
         );
 
-        ArrayList<MonsterType> alakazamTypes = new ArrayList<>();
-        alakazamTypes.add(psychic);
+        ArrayList<MonsterType> jynchampTypes = new ArrayList<>();
+        jynchampTypes.add(psychic);
+        jynchampTypes.add(fighting);
 
-        ArrayList<Attack> alakazamAttacks = new ArrayList<>();
-        alakazamAttacks.add(psychicAttack);
-        alakazamAttacks.add(shadowBall);
-        alakazamAttacks.add(iceBeam);
-        alakazamAttacks.add(swift);
+        ArrayList<Attack> jynchampAttacks = new ArrayList<>();
+        jynchampAttacks.add(noogie);
+        jynchampAttacks.add(terribleSinging);
+        jynchampAttacks.add(bearHug);
+        jynchampAttacks.add(stopDropAndRoll);
 
-        Monster alakazam = new Monster(
-                this.mAlakazamTexture,
+        Monster jynchamp = new Monster(
+                this.mJynchampTexture,
                 this.getVertexBufferObjectManager(),
                 "Jynchamp",
-                alakazamTypes,
-                alakazamAttacks,
+                jynchampTypes,
+                jynchampAttacks,
+                jynchampSound,
                 this
         );
 
-        ArrayList<MonsterType> hitmonchanTypes = new ArrayList<>();
-        hitmonchanTypes.add(fighting);
+        ArrayList<MonsterType> bonekingTypes = new ArrayList<>();
+        bonekingTypes.add(ground);
 
-        ArrayList<Attack> hitmonchanAttacks = new ArrayList<>();
-        hitmonchanAttacks.add(firePunch);
-        hitmonchanAttacks.add(icePunch);
-        hitmonchanAttacks.add(thunderPunch);
-        hitmonchanAttacks.add(closeCombat);
+        ArrayList<Attack> bonekingAttacks = new ArrayList<>();
+        bonekingAttacks.add(bonesaber);
+        bonekingAttacks.add(doggyPile);
+        bonekingAttacks.add(liftedMountain);
+        bonekingAttacks.add(staticSockRub);
 
-        Monster hitmonchan = new Monster(
-                this.mHitmonchanTexture,
+        Monster boneking = new Monster(
+                this.mBonekingTexture,
                 this.getVertexBufferObjectManager(),
                 "Boneking",
-                hitmonchanTypes,
-                hitmonchanAttacks,
+                bonekingTypes,
+                bonekingAttacks,
+                bonekingSound,
                 this
         );
 
 
-        ArrayList<MonsterType> venusaurTypes = new ArrayList<>();
-        venusaurTypes.add(grass);
-        venusaurTypes.add(poison);
+        ArrayList<MonsterType> scykansTypes = new ArrayList<>();
+        scykansTypes.add(grass);
+        scykansTypes.add(poison);
 
-        ArrayList<Attack> venusaurAttacks = new ArrayList<>();
-        venusaurAttacks.add(solarBeam);
-        venusaurAttacks.add(sludgeBomb);
-        venusaurAttacks.add(strength);
-        venusaurAttacks.add(earthquake);
+        ArrayList<Attack> scykansAttacks = new ArrayList<>();
+        scykansAttacks.add(venomousCrunch);
+        scykansAttacks.add(scatterThorns);
+        scykansAttacks.add(hiss);
+        scykansAttacks.add(burrow);
 
-        Monster venusaur = new Monster(
-                this.mVenusaurTexture,
+        Monster scykans = new Monster(
+                this.mScykansTexture,
                 this.getVertexBufferObjectManager(),
                 "Scykans",
-                venusaurTypes,
-                venusaurAttacks,
+                scykansTypes,
+                scykansAttacks,
+                scykansSound,
                 this
         );
 
-        ArrayList<MonsterType> rhydonTypes = new ArrayList<>();
-        rhydonTypes.add(rock);
-        rhydonTypes.add(ground);
+        ArrayList<MonsterType> rhyterTypes = new ArrayList<>();
+        rhyterTypes.add(ghost);
+        rhyterTypes.add(rock);
 
-        ArrayList<Attack> rhydonAttacks = new ArrayList<>();
-        rhydonAttacks.add(earthquake);
-        rhydonAttacks.add(stoneEdge);
-        rhydonAttacks.add(strength);
-        rhydonAttacks.add(signalBeam);
+        ArrayList<Attack> rhyterAttacks = new ArrayList<>();
+        rhyterAttacks.add(wallSneak);
+        rhyterAttacks.add(wallSmash);
+        rhyterAttacks.add(tapShoulder);
+        rhyterAttacks.add(hornDrill);
 
-        Monster rhydon = new Monster(
+        Monster rhyter = new Monster(
                 this.mRhydonTexture,
                 this.getVertexBufferObjectManager(),
                 "Rhyter",
-                rhydonTypes,
-                rhydonAttacks,
+                rhyterTypes,
+                rhyterAttacks,
+                rhyterSound,
                 this
         );
 
-        ArrayList<MonsterType> dragoniteTypes = new ArrayList<>();
-        dragoniteTypes.add(dragon);
-        dragoniteTypes.add(flying);
+        ArrayList<MonsterType> ridochanTypes = new ArrayList<>();
+        ridochanTypes.add(dragon);
+        ridochanTypes.add(fire);
 
-        ArrayList<Attack> dragoniteAttacks = new ArrayList<>();
-        dragoniteAttacks.add(dragonRage);
-        dragoniteAttacks.add(earthquake);
-        dragoniteAttacks.add(firePunch);
-        dragoniteAttacks.add(surf);
+        ArrayList<Attack> ridochanAttacks = new ArrayList<>();
+        ridochanAttacks.add(yearsOfDragon);
+        ridochanAttacks.add(hellfire);
+        ridochanAttacks.add(mentalPrison);
+        ridochanAttacks.add(walkAway);
 
-        Monster dragonite = new Monster(
-                this.mDragoniteTexture,
+        Monster ridochan = new Monster(
+                this.mRidochanTexture,
                 this.getVertexBufferObjectManager(),
                 "Ridochan",
-                dragoniteTypes,
-                dragoniteAttacks,
+                ridochanTypes,
+                ridochanAttacks,
+                ridochanSound,
                 this
         );
 
         ArrayList<Monster> red = new ArrayList<>();
-        red.add(charizard);
-        red.add(raichu);
-        red.add(starmie);
+        red.add(golpin);
+        red.add(oddsect);
+        red.add(boneking);
 
         ArrayList<Monster> oak = new ArrayList<>();
-        oak.add(blastoise);
-        oak.add(alakazam);
-        oak.add(hitmonchan);
+        oak.add(jynchamp);
+        oak.add(slugspark);
+        oak.add(beevee);
 
         ArrayList<Monster> rocket = new ArrayList<>();
-        rocket.add(venusaur);
-        rocket.add(rhydon);
-        rocket.add(dragonite);
+        rocket.add(scykans);
+        rocket.add(rhyter);
+        rocket.add(ridochan);
 
         this.characterTeams.add(red);
         this.characterTeams.add(oak);
@@ -883,9 +943,32 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 new SpriteMenuItem(8, mBackMenuItemTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
 
-        final Sprite monster1 = new Sprite(-60, -260, monster1Texture, getVertexBufferObjectManager());
-        final Sprite monster2 = new Sprite(-60, -110, monster2Texture, getVertexBufferObjectManager());
-        final Sprite monster3 = new Sprite(-60, 40, monster3Texture, getVertexBufferObjectManager());
+        final AnimatedSprite monster1 = new AnimatedSprite(
+                0 - team.get(0).getWidth()/2f,
+                -200 - team.get(0).getHeight()/2f,
+                team.get(0).getTiledTextureRegion(),
+                getVertexBufferObjectManager()
+        );
+        monster1.animate(Monster.releaseFrameDuration, 0, 61, true);
+        monster1.setScale(.7f);
+
+        final AnimatedSprite monster2 = new AnimatedSprite(
+                0 - team.get(1).getWidth()/2f,
+                -50 - team.get(1).getHeight()/2f,
+                team.get(1).getTiledTextureRegion(),
+                getVertexBufferObjectManager()
+        );
+        monster2.animate(Monster.releaseFrameDuration, 0, 61, true);
+        monster2.setScale(.7f);
+
+        final AnimatedSprite monster3 = new AnimatedSprite(
+                0 - team.get(2).getWidth()/2f,
+                100 - team.get(2).getHeight()/2f,
+                team.get(2).getTiledTextureRegion(),
+                getVertexBufferObjectManager()
+        );
+        monster3.animate(Monster.releaseFrameDuration, 0, 61, true);
+        monster3.setScale(.7f);
 
         final Text monster1Name = new Text(95, -260, this.comicSansH1, team.get(0).getName(), this.getVertexBufferObjectManager());
         final Text monster2Name = new Text(95, -110, this.comicSansH1, team.get(1).getName(), this.getVertexBufferObjectManager());
@@ -1396,15 +1479,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 .getAttacks()
                 .get(attackIndex);
 
-        // chose an attack
-        queueAttackOutput(
-                (player ? "" : "Opponent's ") + monster.getName() + " used " + attack.getName() + "!",
-                monster,
-                targetMonster,
-                attack,
-                player
-        );
-
 //        Damage Calculations
 //        http://www.serebii.net/games/damage.shtml
 //
@@ -1450,6 +1524,17 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         if (effectiveness != 0) {
             targetMonster.takeDamage((int) Math.ceil(damage_calculation), player);
         }
+
+        // chose an attack
+        queueAttackOutput(
+                (player ? "" : "Opponent's ") + monster.getName() + " used " + attack.getName() + "!",
+                monster,
+                targetMonster,
+                attack,
+                criticalHit == 2,
+                player
+        );
+
 
         if (effectiveness > 1f) {
             this.queueSimpleOutput("It's super effective!!!");
@@ -1582,8 +1667,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         Debug.d("Game Output", gameOutputText);
     }
 
-    public void queueAttackOutput(String gameOutputText, Monster monster, Monster targetMonster, Attack attack, boolean player) {
-        OutputScene outputScene = new AttackOutputScene(gameOutputText, this, sansSmall, monster, targetMonster, attack, player);
+    public void queueAttackOutput(String gameOutputText, Monster monster, Monster targetMonster, Attack attack, boolean critical, boolean player) {
+        OutputScene outputScene = new AttackOutputScene(gameOutputText, this, sansSmall, monster, targetMonster, attack, critical, player);
         gameOutputQueue.add(outputScene);
         Debug.d("Game Output", gameOutputText);
     }
