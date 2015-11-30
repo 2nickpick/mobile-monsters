@@ -1,6 +1,13 @@
 package edu.unf.soc.monster_strategy_battle;
 
 import org.andengine.engine.handler.physics.PhysicsHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.modifier.AlphaModifier;
+import org.andengine.entity.modifier.FadeInModifier;
+import org.andengine.entity.modifier.FadeOutModifier;
+import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.text.Text;
@@ -12,6 +19,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class Monster extends GameObject {
 
@@ -48,21 +57,25 @@ public class Monster extends GameObject {
 
     private ITiledTextureRegion preview;
 
+    private MainActivity mainActivity;
+
     public Monster(final float pX, final float pY, final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager) {
         super(pX, pY, textureRegion, vertexBufferObjectManager);
 
-        Arrays.fill(this.releaseFrameDuration, 50L);
+//        Arrays.fill(this.releaseFrameDuration, 50L);
 //        Arrays.fill(this.attackFrameDuration, 50L);
 //        Arrays.fill(this.damageFrameDuration, 50L);
 //        Arrays.fill(this.faintFrameDuration, 50L);
     }
 
-    public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks) {
+    public Monster(final ITiledTextureRegion textureRegion, final VertexBufferObjectManager vertexBufferObjectManager, String name, ArrayList<MonsterType> types, ArrayList<Attack> attacks, MainActivity mainActivity) {
         super(0, 0, textureRegion, vertexBufferObjectManager);
         this.name = name;
         this.types = types;
         this.attacks = attacks;
         this.preview = textureRegion;
+        this.mainActivity = mainActivity;
+        this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         // setup stats based on monster name
         switch(name) {
@@ -225,6 +238,10 @@ public class Monster extends GameObject {
         this.detachSelf();
         scene.attachChild(this);
 
+        this.clearEntityModifiers();
+        this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        this.registerEntityModifier(new AlphaModifier(1.5f, 0, 1));
+
         if(player) {
             this.setPosition(150 - this.getWidth()/2f, 280);
             this.setScaleX(-1);
@@ -235,31 +252,64 @@ public class Monster extends GameObject {
         this.animate(releaseFrameDuration, 0, 61, true);
     }
 
-    public void attack() {
-        this.animate(releaseFrameDuration, 0, 61, true);
+    public void recall(Scene scene, boolean player) {
+
+        this.clearEntityModifiers();
+        this.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        this.registerEntityModifier(new AlphaModifier(1.5f, 1, 0));
     }
 
-    public void damage(int damage) {
+    public void attack(boolean player) {
+
+        //attack animation
+        this.animate(releaseFrameDuration, 0, 61, true);
+
+    }
+
+    public void damage() {
+
+        final LoopEntityModifier blinker =
+                new LoopEntityModifier(
+                    new SequenceEntityModifier(
+                            new FadeOutModifier(0.1f),
+                            new FadeInModifier(0.1f)
+                ),
+                2);
+
+        this.registerEntityModifier(blinker);
+
+        if( this.isInDanger() ) {
+            this.danger();
+        }
+    }
+
+    public void takeDamage(int damage, boolean player) {
 
         if(damage > this.currentHP){
             damage = currentHP;
         }
 
         this.currentHP -= damage;
-        this.animate(releaseFrameDuration, 0, 61, true);
 
-        MainActivity.queueGameOutput(this.getName() + " lost " + damage + "HP!!");
-        MainActivity.queueGameOutput(this.getName() + "'s current HP: " + currentHP + "");
+        Debug.d(this.getName() + " lost " + damage + "HP!!");
+        Debug.d(this.getName() + "'s current HP: " + currentHP + "");
 
         if(this.isFainted()) {
             this.currentHP = 0;
-            this.faint();
         }
     }
 
-    public void faint() {
-        MainActivity.queueGameOutput(this.getName() + " fainted!!!");
-        this.animate(releaseFrameDuration, 0, 61, true);
+    public void faint(boolean player) {
+        this.clearEntityModifiers();
+        this.registerEntityModifier(new AlphaModifier(1.5f, 0, 255));
+    }
+
+    public boolean isInDanger() {
+        return this.currentHP < Math.round(this.maxHP / 4) && this.currentHP > 0;
+    }
+
+    public void danger() {
+        this.setColor(1f, 125f / 255, 125f / 255);
     }
 
     public int getCurrentAttack() {

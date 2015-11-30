@@ -17,14 +17,15 @@ import java.util.Arrays;
 /**
  * Created by thenickpick on 11/27/2015.
  */
-public class OutputScene extends Scene implements IOnSceneTouchListener {
+public abstract class OutputScene extends Scene implements IOnSceneTouchListener {
 
-    private MainActivity mainActivity;
+    protected MainActivity mainActivity;
     private Font sansSmall;
 
     private String outputText;
     private boolean ready; //finished writing out
     private boolean complete; //load next scene
+    protected boolean animating = false; //onSceneReady is still running
     private int gameOutputTextCounter;
 
     private final Text gameOutputText;
@@ -66,21 +67,23 @@ public class OutputScene extends Scene implements IOnSceneTouchListener {
 
         final String handlerOutputText = outputText;
 
-        gameOutputText.registerUpdateHandler(new TimerHandler(0.175f, true, new ITimerCallback() {
+        gameOutputText.registerUpdateHandler(new TimerHandler(0.1f, true, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
-            // draw the next frame
-            if (!ready && gameOutputTextCounter < handlerOutputText.length()) {
-                gameOutputText.setText(handlerOutputText.substring(0, gameOutputTextCounter));
-                gameOutputTextCounter++;
-            }
+                // draw the next frame
+                if (!ready && gameOutputTextCounter <= handlerOutputText.length()) {
+                    gameOutputText.setText(handlerOutputText.substring(0, gameOutputTextCounter));
+                    gameOutputTextCounter++;
+                }
 
-            // if the string is done, load up the next one
-            if (gameOutputTextCounter >= handlerOutputText.length()) {
-                ready = true;
+                // if the string is done, load up the next one
+                if (gameOutputTextCounter > handlerOutputText.length()) {
+                    ready = true;
 
-                // run the callback
-            }
+                    // run the callback
+                    animating = true;
+                    onSceneReady();
+                }
             }
         }));
 
@@ -114,7 +117,12 @@ public class OutputScene extends Scene implements IOnSceneTouchListener {
                 this.ready = true;
                 this.gameOutputText.setText(outputText);
                 gameOutputTextCounter = outputText.length();
-            } else {
+
+                // run the callback
+                this.animating = true;
+                onSceneReady();
+
+            } else if(!this.animating) {
                 this.complete = true;
                 mainActivity.drawGameOutputQueue();
             }
@@ -129,4 +137,6 @@ public class OutputScene extends Scene implements IOnSceneTouchListener {
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
+
+    abstract public void onSceneReady();
 }
