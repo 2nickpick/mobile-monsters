@@ -299,6 +299,10 @@ public class Monster extends GameObject {
         final Rectangle monsterHPBar = player ? mainActivity.activePlayerMonsterHPBar : mainActivity.activeOpponentMonsterHPBar;
         final float desiredHPBarWidth = (float) currentHP / maxHP * 96;
         monsterHPBar.setWidth(desiredHPBarWidth);
+
+        if(this.isInDanger()) {
+            this.danger(player);
+        }
     }
 
     public void takeDamage(int damage, boolean player) {

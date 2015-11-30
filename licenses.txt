@@ -1,0 +1,45 @@
+Animated Monster Sprites created by John Zank and Nicholas Pickering
+
+Character Sprites (Adrienne, Brody, and Zack) (Creative Commons 3.0 Non-commercial)
+http://cherushimetsumari.deviantart.com/art/Pokemon-Sprites-196839760
+
+Main Menu Background (Creative Commons 2.0)
+https://upload.wikimedia.org/wikipedia/commons/e/ed/Retro-BlueWhite-Smartphone_Background.png
+
+Battle Background (Creative Commons 2.0)
+https://www.flickr.com/photos/j_baer/6059848987/in/photostream/
+
+Pointing Hand icon (Creative Commons 3.0)
+https://commons.wikimedia.org/wiki/File:Farm-Fresh_hand_point.png
+
+Exit Door Icon (Creative Commons 3.0)
+https://commons.wikimedia.org/wiki/File:Farm-Fresh_door_in.png
+
+Switch Icon (Creative Commons 3.0)
+https://commons.wikimedia.org/wiki/File:Farm-Fresh_arrow_switch.png
+
+Sword icon (Creative Commons 3.0)
+https://commons.wikimedia.org/wiki/File:RPG_Toolkit.png
+
+
+Sounds
+All Sound Effects were created via http://www.superflashbros.net/as3sfxr/ under CC0
+
+Music
+
+Menu Music, menu.mp3 (Creative Commons 3.0 non-commercial)
+    ~Flight~ by AL3X
+    http://sampleswap.org/artist/AL3X
+
+Battle Music, battle.mp3 (Creative Commons 3.0)
+    Kick Shock by Kevin MacLeod (Inompetech.com)
+    http://incompetech.com/music/royalty-free/
+
+Defeat Music, defeat.mp3 (Creative Commons 3.0)
+    A Singular Perversion by Kevin MacLeod (Inompetech.com)
+    http://incompetech.com/music/royalty-free/
+
+Victory Music, victory.mp3 (Creative Commons 3.0)
+    The Show Must Be Go by Kevin MacLeod (Inompetech.com)
+    http://incompetech.com/music/royalty-free/
+

@@ -54,27 +54,15 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private ITextureRegion mBattleBackgroundTextureRegion;
     private ITextureRegion mNewGameMenuItemTexture;
     private ITextureRegion mLoadGameMenuItemTexture;
-    private ITextureRegion mPreviewRedTexture;
-    private ITextureRegion mPreviewOakTexture;
-    private ITextureRegion mPreviewRocketTexture;
+    private ITextureRegion mPreviewAdrienneTexture;
+    private ITextureRegion mPreviewBrodyTexture;
+    private ITextureRegion mPreviewZackTexture;
     private ITextureRegion mMainMenuItemTexture;
 
-    private ITextureRegion mChooseRedTexture;
-    private ITextureRegion mChooseOakTexture;
-    private ITextureRegion mChooseRocketTexture;
+    private ITextureRegion mChooseAdrienneTexture;
+    private ITextureRegion mChooseBrodyTexture;
+    private ITextureRegion mChooseZackTexture;
     private ITextureRegion mBackMenuItemTexture;
-
-    private ITextureRegion mPreviewCharizardTexture;
-    private ITextureRegion mPreviewRaichuTexture;
-    private ITextureRegion mPreviewStarmieTexture;
-
-    private ITextureRegion mPreviewBlastoiseTexture;
-    private ITextureRegion mPreviewHitmonchanTexture;
-    private ITextureRegion mPreviewAlakazamTexture;
-
-    private ITextureRegion mPreviewVenusaurTexture;
-    private ITextureRegion mPreviewRhydonTexture;
-    private ITextureRegion mPreviewDragoniteTexture;
 
     private ITextureRegion mExitGameMenuItemTexture;
 
@@ -213,45 +201,45 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 }
             });
 
-            ITexture selectRedTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture selectAdrienneTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/selectRed.png");
+                    return getAssets().open("graphics/selectAdrienne.png");
                 }
             });
 
-            ITexture selectOakTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture selectBrodyTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/selectOak.png");
+                    return getAssets().open("graphics/selectBrody.png");
                 }
             });
 
-            ITexture selectRocketTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture selectZackTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/selectRocket.png");
+                    return getAssets().open("graphics/selectZack.png");
                 }
             });
 
-            ITexture chooseRedTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture chooseAdrienneTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/iChooseRed.png");
+                    return getAssets().open("graphics/iChooseAdrienne.png");
                 }
             });
 
-            ITexture chooseOakTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture chooseBrodyTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/iChooseOak.png");
+                    return getAssets().open("graphics/iChooseBrody.png");
                 }
             });
 
-            ITexture chooseRocketTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+            ITexture chooseZackTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
-                    return getAssets().open("graphics/iChooseRocket.png");
+                    return getAssets().open("graphics/iChooseZack.png");
                 }
             });
 
@@ -266,69 +254,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 @Override
                 public InputStream open() throws IOException {
                     return getAssets().open("graphics/backMenu.png");
-                }
-            });
-
-            ITexture charizardPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/charizard.png");
-                }
-            });
-
-            ITexture raichuPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/raichu.png");
-                }
-            });
-
-            ITexture starmiePreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/starmie.png");
-                }
-            });
-
-            ITexture blastoisePreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/blastoise.png");
-                }
-            });
-
-            ITexture hitmonchanPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/hitmonchan.png");
-                }
-            });
-
-            ITexture alakazamPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/alakazam.png");
-                }
-            });
-
-            ITexture venusaurPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/venusaur.png");
-                }
-            });
-
-            ITexture rhydonPreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/rhydon.png");
-                }
-            });
-
-            ITexture dragonitePreviewTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
-                @Override
-                public InputStream open() throws IOException {
-                    return getAssets().open("graphics/monsters/dragonite.png");
                 }
             });
 
@@ -368,32 +293,19 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             this.mExitGameMenuItemTexture = TextureRegionFactory.extractFromTexture(exitGameMenuItemTexture);
             this.mBlankAttackMenuItemTexture = TextureRegionFactory.extractFromTexture(blankAttackMenuItemTexture);
 
-            this.mPreviewRedTexture = TextureRegionFactory.extractFromTexture(selectRedTexture);
-            this.mPreviewOakTexture = TextureRegionFactory.extractFromTexture(selectOakTexture);
-            this.mPreviewRocketTexture = TextureRegionFactory.extractFromTexture(selectRocketTexture);
+            this.mPreviewAdrienneTexture = TextureRegionFactory.extractFromTexture(selectAdrienneTexture);
+            this.mPreviewBrodyTexture = TextureRegionFactory.extractFromTexture(selectBrodyTexture);
+            this.mPreviewZackTexture = TextureRegionFactory.extractFromTexture(selectZackTexture);
             this.mMainMenuItemTexture = TextureRegionFactory.extractFromTexture(mainMenuItemTexture);
 
             this.mAttackBattleMenuItemTexture = TextureRegionFactory.extractFromTexture(attackBattleMenuItemTexture);
             this.mSwitchBattleMenuItemTexture = TextureRegionFactory.extractFromTexture(switchBattleMenuItemTexture);
             this.mExitBattleMenuItemTexture = TextureRegionFactory.extractFromTexture(exitBattleMenuItemTexture);
 
-            this.mChooseRedTexture = TextureRegionFactory.extractFromTexture(chooseRedTexture);
-            this.mChooseOakTexture = TextureRegionFactory.extractFromTexture(chooseOakTexture);
-            this.mChooseRocketTexture = TextureRegionFactory.extractFromTexture(chooseRocketTexture);
+            this.mChooseAdrienneTexture = TextureRegionFactory.extractFromTexture(chooseAdrienneTexture);
+            this.mChooseBrodyTexture = TextureRegionFactory.extractFromTexture(chooseBrodyTexture);
+            this.mChooseZackTexture = TextureRegionFactory.extractFromTexture(chooseZackTexture);
             this.mBackMenuItemTexture = TextureRegionFactory.extractFromTexture(backMenuItemTexture);
-
-            this.mPreviewCharizardTexture = TextureRegionFactory.extractFromTexture(charizardPreviewTexture);
-            this.mPreviewRaichuTexture = TextureRegionFactory.extractFromTexture(raichuPreviewTexture);
-            this.mPreviewStarmieTexture = TextureRegionFactory.extractFromTexture(starmiePreviewTexture);
-
-            this.mPreviewBlastoiseTexture = TextureRegionFactory.extractFromTexture(blastoisePreviewTexture);
-            this.mPreviewAlakazamTexture = TextureRegionFactory.extractFromTexture(alakazamPreviewTexture);
-            this.mPreviewHitmonchanTexture = TextureRegionFactory.extractFromTexture(hitmonchanPreviewTexture);
-
-            this.mPreviewVenusaurTexture = TextureRegionFactory.extractFromTexture(venusaurPreviewTexture);
-            this.mPreviewDragoniteTexture = TextureRegionFactory.extractFromTexture(dragonitePreviewTexture);
-            this.mPreviewRhydonTexture = TextureRegionFactory.extractFromTexture(rhydonPreviewTexture);
-
 
             BitmapTextureAtlas alakazamTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
@@ -452,26 +364,14 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             attackBattleMenuItemTexture.load();
             switchBattleMenuItemTexture.load();
             exitBattleMenuItemTexture.load();
-            selectRedTexture.load();
-            selectOakTexture.load();
-            selectRocketTexture.load();
-            chooseRedTexture.load();
-            chooseOakTexture.load();
-            chooseRocketTexture.load();
+            selectAdrienneTexture.load();
+            selectBrodyTexture.load();
+            selectZackTexture.load();
+            chooseAdrienneTexture.load();
+            chooseBrodyTexture.load();
+            chooseZackTexture.load();
             mainMenuItemTexture.load();
             backMenuItemTexture.load();
-
-            charizardPreviewTexture.load();
-            raichuPreviewTexture.load();
-            starmiePreviewTexture.load();
-
-            blastoisePreviewTexture.load();
-            alakazamPreviewTexture.load();
-            hitmonchanPreviewTexture.load();
-
-            venusaurPreviewTexture.load();
-            rhydonPreviewTexture.load();
-            dragonitePreviewTexture.load();
 
             charizardTexture.load();
             raichuTexture.load();
@@ -528,12 +428,23 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     @Override
     protected Scene onCreateScene() {
 
+        onCreateMainScene();
+
+        return this.scene;
+    }
+
+    protected void onCreateMainScene() {
+
+        this.scene.detachChildren();
+
+        this.scene = new Scene();
+
         // Setup background
         Sprite backgroundSprite = new Sprite(0, 0, this.mBackgroundTextureRegion, getVertexBufferObjectManager());
         this.scene.attachChild(backgroundSprite);
 
-        Sprite battleBackgroundSprite = new Sprite(0, 0, this.mBattleBackgroundTextureRegion, getVertexBufferObjectManager());
-        this.gameScene.attachChild(battleBackgroundSprite);
+        Text title = new Text(130, 20, comicSansH1, "Mobile Monsters", getVertexBufferObjectManager());
+        this.scene.attachChild(title);
 
         // Generate Character Teams
         this.generateTeams();
@@ -556,8 +467,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             battleMusic.pause();
         }
         menuMusic.play();
-
-        return this.scene;
     }
 
     private void generateTeams() {
@@ -812,24 +721,24 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 this
         );
 
-        ArrayList<Monster> red = new ArrayList<>();
-        red.add(golpin);
-        red.add(oddsect);
-        red.add(boneking);
+        ArrayList<Monster> adrienne = new ArrayList<>();
+        adrienne.add(golpin);
+        adrienne.add(oddsect);
+        adrienne.add(boneking);
 
-        ArrayList<Monster> oak = new ArrayList<>();
-        oak.add(jynchamp);
-        oak.add(slugspark);
-        oak.add(beevee);
+        ArrayList<Monster> brody = new ArrayList<>();
+        brody.add(jynchamp);
+        brody.add(slugspark);
+        brody.add(beevee);
 
-        ArrayList<Monster> rocket = new ArrayList<>();
-        rocket.add(scykans);
-        rocket.add(rhyter);
-        rocket.add(ridochan);
+        ArrayList<Monster> zack = new ArrayList<>();
+        zack.add(scykans);
+        zack.add(rhyter);
+        zack.add(ridochan);
 
-        this.characterTeams.add(red);
-        this.characterTeams.add(oak);
-        this.characterTeams.add(rocket);
+        this.characterTeams.add(adrienne);
+        this.characterTeams.add(brody);
+        this.characterTeams.add(zack);
     }
 
     @Override
@@ -878,13 +787,13 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.characterSelectMenu.setX(105);
 
         final IMenuItem redMenuItem = new ScaleMenuItemDecorator(
-                new SpriteMenuItem(3, mPreviewRedTexture, getVertexBufferObjectManager()
+                new SpriteMenuItem(3, mPreviewAdrienneTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
         final IMenuItem oakMenuItem = new ScaleMenuItemDecorator(
-                new SpriteMenuItem(4, mPreviewOakTexture, getVertexBufferObjectManager()
+                new SpriteMenuItem(4, mPreviewBrodyTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
         final IMenuItem rocketMenuItem = new ScaleMenuItemDecorator(
-                new SpriteMenuItem(5, mPreviewRocketTexture, getVertexBufferObjectManager()
+                new SpriteMenuItem(5, mPreviewZackTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
         final IMenuItem mainMenuItem = new ScaleMenuItemDecorator(
                 new SpriteMenuItem(6, mMainMenuItemTexture, getVertexBufferObjectManager()
@@ -909,27 +818,17 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.characterPreviewMenu.setX(105);
 
         ITextureRegion characterTexture;
-        ITextureRegion monster1Texture, monster2Texture, monster3Texture;
 
         switch (this.playerIndex) {
             case 1:
-                characterTexture = mChooseOakTexture;
-                monster1Texture = mPreviewBlastoiseTexture;
-                monster2Texture = mPreviewAlakazamTexture;
-                monster3Texture = mPreviewHitmonchanTexture;
+                characterTexture = mChooseBrodyTexture;
                 break;
             case 2:
-                characterTexture = mChooseRocketTexture;
-                monster1Texture = mPreviewVenusaurTexture;
-                monster2Texture = mPreviewRhydonTexture;
-                monster3Texture = mPreviewDragoniteTexture;
+                characterTexture = mChooseZackTexture;
                 break;
             case 0:
             default:
-                characterTexture = mChooseRedTexture;
-                monster1Texture = mPreviewCharizardTexture;
-                monster2Texture = mPreviewRaichuTexture;
-                monster3Texture = mPreviewStarmieTexture;
+                characterTexture = mChooseAdrienneTexture;
                 break;
         }
 
@@ -945,7 +844,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         final AnimatedSprite monster1 = new AnimatedSprite(
                 0 - team.get(0).getWidth()/2f,
-                -200 - team.get(0).getHeight()/2f,
+                -120 - team.get(0).getHeight()/2f,
                 team.get(0).getTiledTextureRegion(),
                 getVertexBufferObjectManager()
         );
@@ -954,7 +853,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         final AnimatedSprite monster2 = new AnimatedSprite(
                 0 - team.get(1).getWidth()/2f,
-                -50 - team.get(1).getHeight()/2f,
+                30 - team.get(1).getHeight()/2f,
                 team.get(1).getTiledTextureRegion(),
                 getVertexBufferObjectManager()
         );
@@ -963,20 +862,20 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         final AnimatedSprite monster3 = new AnimatedSprite(
                 0 - team.get(2).getWidth()/2f,
-                100 - team.get(2).getHeight()/2f,
+                180 - team.get(2).getHeight()/2f,
                 team.get(2).getTiledTextureRegion(),
                 getVertexBufferObjectManager()
         );
         monster3.animate(Monster.releaseFrameDuration, 0, 61, true);
         monster3.setScale(.7f);
 
-        final Text monster1Name = new Text(95, -260, this.comicSansH1, team.get(0).getName(), this.getVertexBufferObjectManager());
-        final Text monster2Name = new Text(95, -110, this.comicSansH1, team.get(1).getName(), this.getVertexBufferObjectManager());
-        final Text monster3Name = new Text(95, 40, this.comicSansH1, team.get(2).getName(), this.getVertexBufferObjectManager());
+        final Text monster1Name = new Text(95, -180, this.comicSansH1, team.get(0).getName(), this.getVertexBufferObjectManager());
+        final Text monster2Name = new Text(95, -30, this.comicSansH1, team.get(1).getName(), this.getVertexBufferObjectManager());
+        final Text monster3Name = new Text(95, 120, this.comicSansH1, team.get(2).getName(), this.getVertexBufferObjectManager());
 
-        final Text monster1Type = new Text(95, -225, this.comicSansH1, team.get(0).getTypeString(), this.getVertexBufferObjectManager());
-        final Text monster2Type = new Text(95, -75, this.comicSansH1, team.get(1).getTypeString(), this.getVertexBufferObjectManager());
-        final Text monster3Type = new Text(95, 75, this.comicSansH1, team.get(2).getTypeString(), this.getVertexBufferObjectManager());
+        final Text monster1Type = new Text(95, -145, this.comicSansH1, team.get(0).getTypeString(), this.getVertexBufferObjectManager());
+        final Text monster2Type = new Text(95, 5, this.comicSansH1, team.get(1).getTypeString(), this.getVertexBufferObjectManager());
+        final Text monster3Type = new Text(95, 155, this.comicSansH1, team.get(2).getTypeString(), this.getVertexBufferObjectManager());
 
         this.characterPreviewMenu.addMenuItem(selectCharacterMenuItem);
         this.characterPreviewMenu.addMenuItem(backMenuItem);
@@ -1194,6 +1093,9 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.createVictoryMenu();
         this.createDefeatMenu();
 
+        Sprite battleBackgroundSprite = new Sprite(0, 0, this.mBattleBackgroundTextureRegion, getVertexBufferObjectManager());
+        this.gameScene.attachChild(battleBackgroundSprite);
+
         this.opponentIndex = (new Random()).nextInt(this.characterTeams.size());
         while (this.opponentIndex == this.playerIndex) {
             this.opponentIndex = (new Random()).nextInt(this.characterTeams.size());
@@ -1203,7 +1105,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.activePlayerMonsterLevel = new Text(320, 340, sansSmall, "      ", getVertexBufferObjectManager());
         this.activePlayerMonsterHP = new Text(320, 380, sansSmall, "          ", getVertexBufferObjectManager());
 
-        Entity activePlayerMonsterHPBarGroup = new Entity(320, 364);
+        Entity activePlayerMonsterHPBarGroup = new Entity(320, 360);
         Rectangle activePlayerMonsterHPBarContainer = new Rectangle(0, 0, 100, 18, getVertexBufferObjectManager());
         activePlayerMonsterHPBarContainer.setColor(0, 0, 0);
         this.activePlayerMonsterHPBar = new Rectangle(2, 2, 96, 14, getVertexBufferObjectManager());
@@ -1216,7 +1118,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         this.activeOpponentMonsterName = new Text(100, 100, sansSmall, "                        ", getVertexBufferObjectManager());
         this.activeOpponentMonsterLevel = new Text(100, 120, sansSmall, "      ", getVertexBufferObjectManager());
 
-        Entity activeOpponentMonsterHPBarGroup = new Entity(100, 144);
+        Entity activeOpponentMonsterHPBarGroup = new Entity(100, 140);
         Rectangle activeOpponentMonsterHPBarContainer = new Rectangle(0, 0, 100, 18, getVertexBufferObjectManager());
         activeOpponentMonsterHPBarContainer.setColor(0, 0, 0);
         this.activeOpponentMonsterHPBar = new Rectangle(2, 2, 96, 14, getVertexBufferObjectManager());
@@ -1293,19 +1195,19 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 System.exit(0);
                 break;
             case 3:
-                // preview RED
+                // preview Adrienne
                 this.playerIndex = 0;
                 this.createCharacterPreviewMenu();
                 this.scene.setChildScene(this.characterPreviewMenu);
                 break;
             case 4:
-                // preview OAK
+                // preview Brody
                 this.playerIndex = 1;
                 this.createCharacterPreviewMenu();
                 this.scene.setChildScene(this.characterPreviewMenu);
                 break;
             case 5:
-                // preview ROCKET
+                // preview Zack
                 this.playerIndex = 2;
                 this.createCharacterPreviewMenu();
                 this.scene.setChildScene(this.characterPreviewMenu);
@@ -1348,7 +1250,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
                 this.gameScene.detachChildren();
 
-                this.onCreateScene();
+                this.onCreateMainScene();
                 mEngine.setScene(this.scene);
                 this.scene.setChildScene(this.mainMenu);
                 menuMusic.seekTo(0);
@@ -1475,10 +1377,6 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private void processAttack(Monster monster, Monster targetMonster, int attackIndex, boolean player) {
 
-        Attack attack = monster
-                .getAttacks()
-                .get(attackIndex);
-
 //        Damage Calculations
 //        http://www.serebii.net/games/damage.shtml
 //
@@ -1491,6 +1389,10 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 //        X = same-Type attack bonus (1 or 1.5)
 //        Y = Type modifiers (40, 20, 10, 5, 2.5, or 0)
 //        Z = a random number between 217 and 255
+
+        Attack attack = monster
+                .getAttacks()
+                .get(attackIndex);
 
         int attackersLevel = monster.getLevel();
         int criticalHit = (Math.random() <= .15) ? 2 : 1;
@@ -1531,22 +1433,25 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 monster,
                 targetMonster,
                 attack,
-                criticalHit == 2,
+                criticalHit == 2 && effectiveness != 0,
                 player
         );
 
 
-        if (effectiveness > 1f) {
-            this.queueSimpleOutput("It's super effective!!!");
-        } else if (effectiveness == 0) {
+        if(effectiveness == 0) {
             this.queueSimpleOutput("It's does not affect...");
-        } else if (effectiveness < 1f) {
-            this.queueSimpleOutput("It's not very effective...");
+        } else {
+            if (effectiveness > 1f) {
+                this.queueSimpleOutput("It's super effective!!!");
+            } else if (effectiveness < 1f) {
+                this.queueSimpleOutput("It's not very effective...");
+            }
+
+            if (criticalHit == 2) {
+                this.queueSimpleOutput("Critical Hit!!!");
+            }
         }
 
-        if (criticalHit == 2) {
-            this.queueSimpleOutput("Critical Hit!!!");
-        }
 
         if (targetMonster.isFainted()) {
 
