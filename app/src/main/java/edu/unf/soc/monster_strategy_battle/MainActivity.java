@@ -41,6 +41,7 @@ import org.andengine.util.debug.Debug;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IOnMenuItemClickListener {
@@ -64,6 +65,9 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private ITextureRegion mChooseZackTexture;
     private ITextureRegion mBackMenuItemTexture;
 
+    private ITextureRegion mEasyMenuItemTexture;
+    private ITextureRegion mHardMenuItemTexture;
+
     private ITextureRegion mExitGameMenuItemTexture;
 
     private ITextureRegion mAttackBattleMenuItemTexture;
@@ -74,6 +78,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private Scene scene = new Scene();
     private MenuScene mainMenu = new MenuScene();
     private MenuScene characterSelectMenu = new MenuScene();
+    private MenuScene difficultySelectMenu = new MenuScene();
     private MenuScene characterPreviewMenu = new MenuScene();
     private int playerIndex;
     public int activePlayerMonsterIndex = 0;
@@ -131,6 +136,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
     private Sound ridochanSound;
     private Sound scykansSound;
     private Sound slugsparkSound;
+
+    private boolean hardMode = false;
 
     @Override
     protected void onCreateResources() {
@@ -250,6 +257,20 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 }
             });
 
+            ITexture easyModeMenuItemTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return getAssets().open("graphics/easyMenu.png");
+                }
+            });
+
+            ITexture hardModeMenuItemTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return getAssets().open("graphics/hardMenu.png");
+                }
+            });
+
             ITexture backMenuItemTexture = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
@@ -307,6 +328,9 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             this.mChooseZackTexture = TextureRegionFactory.extractFromTexture(chooseZackTexture);
             this.mBackMenuItemTexture = TextureRegionFactory.extractFromTexture(backMenuItemTexture);
 
+            this.mEasyMenuItemTexture = TextureRegionFactory.extractFromTexture(easyModeMenuItemTexture);
+            this.mHardMenuItemTexture = TextureRegionFactory.extractFromTexture(hardModeMenuItemTexture);
+
             BitmapTextureAtlas alakazamTexture = new BitmapTextureAtlas(this.getTextureManager(), 1596, 2016,
                     TextureOptions.BILINEAR_PREMULTIPLYALPHA);
             this.mJynchampTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(alakazamTexture, this.getAssets(),
@@ -361,6 +385,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
             newGameMenuItemTexture.load();
             loadGameMenuItemTexture.load();
             exitGameMenuItemTexture.load();
+            easyModeMenuItemTexture.load();
+            hardModeMenuItemTexture.load();
             attackBattleMenuItemTexture.load();
             switchBattleMenuItemTexture.load();
             exitBattleMenuItemTexture.load();
@@ -454,6 +480,9 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         // Create characterSelectMenu
         this.createCharacterSelectMenu();
+
+        // Create difficultySelectMenu
+        this.createDifficultySelectMenu();
 
         // Start at the Main Menu
         this.scene.setChildScene(mainMenu);
@@ -809,7 +838,34 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         this.characterSelectMenu.setOnMenuItemClickListener(this);
 
-        return this.mainMenu;
+        return this.characterSelectMenu;
+    }
+
+    private MenuScene createDifficultySelectMenu() {
+        this.difficultySelectMenu = new MenuScene(mCamera);
+        this.difficultySelectMenu.setY(255);
+        this.difficultySelectMenu.setX(105);
+
+        final IMenuItem easyMenuItem = new ScaleMenuItemDecorator(
+                new SpriteMenuItem(8, mEasyMenuItemTexture, getVertexBufferObjectManager()
+                ), 1.2f, 1);
+        final IMenuItem hardMenuItem = new ScaleMenuItemDecorator(
+                new SpriteMenuItem(16, mHardMenuItemTexture, getVertexBufferObjectManager()
+                ), 1.2f, 1);
+        final IMenuItem mainMenuItem = new ScaleMenuItemDecorator(
+                new SpriteMenuItem(6, mMainMenuItemTexture, getVertexBufferObjectManager()
+                ), 1.2f, 1);
+
+        this.difficultySelectMenu.addMenuItem(easyMenuItem);
+        this.difficultySelectMenu.addMenuItem(hardMenuItem);
+        this.difficultySelectMenu.addMenuItem(mainMenuItem);
+
+        this.difficultySelectMenu.buildAnimations();
+        this.difficultySelectMenu.setBackgroundEnabled(false);
+
+        this.difficultySelectMenu.setOnMenuItemClickListener(this);
+
+        return this.difficultySelectMenu;
     }
 
     private MenuScene createCharacterPreviewMenu() {
@@ -895,7 +951,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
         this.characterPreviewMenu.setOnMenuItemClickListener(this);
 
-        return this.mainMenu;
+        return this.characterPreviewMenu;
     }
 
 
@@ -1145,33 +1201,128 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     public int opponentMustSwitchMonster() {
 
-        // If the opponent does switch, we select a random available monster
-        ArrayList<Monster> monsters = this.characterTeams.get(opponentIndex);
+        if(hardMode) {
+            ArrayList<Monster> monsters = this.characterTeams.get(opponentIndex);
+            Monster opponentMonster = monsters.get(activeOpponentMonsterIndex);
+            Monster activeMonster = this.characterTeams.get(playerIndex).get(activeOpponentMonsterIndex);
 
-        ArrayList<Monster> availableMonsters = new ArrayList<>();
+            float effectiveness;
 
-        for (int i = 0; i < monsters.size(); i++) {
-            if (!monsters.get(i).isFainted() && i != activeOpponentMonsterIndex) {
-                availableMonsters.add(monsters.get(i));
+            ArrayList<Float> effectivenesses = new ArrayList<>();
+
+            // Check if the current monster is weak to the player
+            for(Monster monster : monsters) {
+                effectiveness = 1f;
+                if(!monster.isFainted()) {
+                    for(MonsterType playerType : activeMonster.getTypes()) {
+                        for (MonsterType opponentType : opponentMonster.getTypes()) {
+                            if (opponentType.getWeaknesses().indexOf(playerType.getName()) >= 0) {
+                                effectiveness *= 2;
+                            }
+
+                            if (opponentType.getResistances().indexOf(playerType.getName()) >= 0) {
+                                effectiveness /= 2;
+                            }
+
+                            if (opponentType.getImmunities().indexOf(playerType.getName()) >= 0) {
+                                effectiveness = 0f;
+                            }
+                        }
+                    }
+                    effectivenesses.add(effectiveness);
+                } else {
+                    effectivenesses.add(100f);
+                }
+            }
+
+            int minIndex = effectivenesses.indexOf(Collections.min(effectivenesses));
+
+            if(minIndex != activeOpponentMonsterIndex) {
+                return minIndex;
+            } else {
+                return -1;
+            }
+        } else {
+
+            // If the opponent does switch, we select a random available monster
+            ArrayList<Monster> monsters = this.characterTeams.get(opponentIndex);
+
+            ArrayList<Monster> availableMonsters = new ArrayList<>();
+
+            for (int i = 0; i < monsters.size(); i++) {
+                if (!monsters.get(i).isFainted() && i != activeOpponentMonsterIndex) {
+                    availableMonsters.add(monsters.get(i));
+                }
+            }
+
+            if (availableMonsters.isEmpty()) {
+                // if there are no available monsters, then we cannot switch
+                return -1;
+            } else {
+                // randomize the monster switch
+                int randomAvailableMonster = (new Random()).nextInt(availableMonsters.size());
+                return monsters.indexOf(availableMonsters.get(randomAvailableMonster));
             }
         }
+    }
 
-        if (availableMonsters.isEmpty()) {
-            // if there are no available monsters, then we cannot switch
-            return -1;
+    public int opponentChooseAttack() {
+
+        ArrayList<Monster> monsters = this.characterTeams.get(opponentIndex);
+        Monster opponentMonster = monsters.get(activeOpponentMonsterIndex);
+        Monster activeMonster = this.characterTeams.get(playerIndex).get(activeOpponentMonsterIndex);
+
+        if(hardMode) {
+
+            float effectiveness;
+
+            ArrayList<Float> effectivenesses = new ArrayList<>();
+
+            // Check if the current monster is weak to the player
+            for(Monster monster : monsters) {
+                effectiveness = 1f;
+                if(!monster.isFainted()) {
+                    for(MonsterType playerType : activeMonster.getTypes()) {
+                        for (MonsterType opponentType : opponentMonster.getTypes()) {
+                            if (opponentType.getWeaknesses().indexOf(playerType.getName()) >= 0) {
+                                effectiveness *= 2;
+                            }
+
+                            if (opponentType.getResistances().indexOf(playerType.getName()) >= 0) {
+                                effectiveness /= 2;
+                            }
+
+                            if (opponentType.getImmunities().indexOf(playerType.getName()) >= 0) {
+                                effectiveness = 0f;
+                            }
+                        }
+                    }
+                    effectivenesses.add(effectiveness);
+                } else {
+                    effectivenesses.add(100f);
+                }
+            }
+
+            int minIndex = effectivenesses.indexOf(Collections.min(effectivenesses));
+
+            if(minIndex != activeOpponentMonsterIndex) {
+                return minIndex;
+            } else {
+                return -1;
+            }
         } else {
-            // randomize the monster switch
-            int randomAvailableMonster = (new Random()).nextInt(availableMonsters.size());
-            return monsters.indexOf(availableMonsters.get(randomAvailableMonster));
+            return new Random().nextInt(opponentMonster.getAttacks().size());
         }
     }
 
     public int opponentChooseSwitchMonster() {
 
         // EASY opponent switching
-        // Opponent has a 15% chance of deciding to switch
-        if (Math.random() >= .15) {
-            return -1;
+        if(!this.hardMode) {
+            // Opponent has a 15% chance of deciding to switch
+            if (Math.random() >= .15) {
+                return -1;
+            }
         }
 
         return this.opponentMustSwitchMonster();
@@ -1183,9 +1334,8 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
         menuCursorSound.play();
         switch (pMenuItem.getID()) {
             case 0:
-            case 8:
-                // new game
-                this.scene.setChildScene(this.characterSelectMenu);
+                // choose difficulty
+                this.scene.setChildScene(this.difficultySelectMenu);
                 break;
             case 1:
                 // load game
@@ -1303,6 +1453,12 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 //player is attacking
                 boolean playerWillAttack = !monsterSwitched;
 
+                //determine opponent's attack
+                int opponentAttackIndex = 0;
+                if(opponentWillAttack) {
+                    opponentAttackIndex = opponentChooseAttack();
+                }
+
                 if (activeMonster.getCurrentSpeed() > opponentMonster.getCurrentSpeed()
                         || activeMonster.getCurrentSpeed() == opponentMonster.getCurrentSpeed()
                         && Math.random() > .5) {
@@ -1320,7 +1476,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                         processAttack(
                                 opponentMonster,
                                 activeMonster,
-                                new Random().nextInt(opponentMonster.getAttacks().size()),
+                                opponentAttackIndex,
                                 false
                         );
                     }
@@ -1330,7 +1486,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                         processAttack(
                                 opponentMonster,
                                 activeMonster,
-                                new Random().nextInt(opponentMonster.getAttacks().size()),
+                                opponentAttackIndex,
                                 false
                         );
                     }
@@ -1365,6 +1521,16 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 );
 
                 this.setNextChildScene(battleMenu);
+
+            case 8:
+                // setup Easy Mode
+                this.hardMode = false;
+                this.scene.setChildScene(this.characterSelectMenu);
+                break;
+            case 16:
+                // setup Hard Mode
+                this.hardMode = true;
+                this.scene.setChildScene(this.characterSelectMenu);
 
             default:
                 break;

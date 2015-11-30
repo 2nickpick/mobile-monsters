@@ -135,6 +135,16 @@ public class MonsterType {
                 this.immunities.add("Normal");
                 this.immunities.add("Fighting");
                 break;
+            case "Dragon":
+                this.weaknesses.add("Ice");
+                this.weaknesses.add("Dragon");
+
+                this.resistances.add("Fire");
+                this.resistances.add("Water");
+                this.resistances.add("Grass");
+                this.resistances.add("Electric");
+
+                break;
         }
     }
 
