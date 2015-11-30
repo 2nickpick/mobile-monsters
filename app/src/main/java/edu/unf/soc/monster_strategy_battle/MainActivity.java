@@ -785,21 +785,17 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     private MenuScene createMainMenu() {
         this.mainMenu = new MenuScene(mCamera);
-        this.mainMenu.setY(255);
+        this.mainMenu.setY(300);
         this.mainMenu.setX(105);
 
         final IMenuItem newGameMenuItem = new ScaleMenuItemDecorator(
                 new SpriteMenuItem(0, mNewGameMenuItemTexture, getVertexBufferObjectManager()
-                ), 1.2f, 1);
-        final IMenuItem loadGameMenuItem = new ScaleMenuItemDecorator(
-                new SpriteMenuItem(1, mLoadGameMenuItemTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
         final IMenuItem exitGameMenuItem = new ScaleMenuItemDecorator(
                 new SpriteMenuItem(2, mExitGameMenuItemTexture, getVertexBufferObjectManager()
                 ), 1.2f, 1);
 
         this.mainMenu.addMenuItem(newGameMenuItem);
-        this.mainMenu.addMenuItem(loadGameMenuItem);
         this.mainMenu.addMenuItem(exitGameMenuItem);
 
         this.mainMenu.buildAnimations();
@@ -1278,38 +1274,32 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
             ArrayList<Float> effectivenesses = new ArrayList<>();
 
-            // Check if the current monster is weak to the player
-            for(Monster monster : monsters) {
+            // Check all attacks for effectiveness, including STAB
+            for(Attack attack : opponentMonster.getAttacks()) {
                 effectiveness = 1f;
-                if(!monster.isFainted()) {
-                    for(MonsterType playerType : activeMonster.getTypes()) {
-                        for (MonsterType opponentType : opponentMonster.getTypes()) {
-                            if (opponentType.getWeaknesses().indexOf(playerType.getName()) >= 0) {
-                                effectiveness *= 2;
-                            }
 
-                            if (opponentType.getResistances().indexOf(playerType.getName()) >= 0) {
-                                effectiveness /= 2;
-                            }
-
-                            if (opponentType.getImmunities().indexOf(playerType.getName()) >= 0) {
-                                effectiveness = 0f;
-                            }
-                        }
-                    }
-                    effectivenesses.add(effectiveness);
-                } else {
-                    effectivenesses.add(100f);
+                // STAB
+                if(opponentMonster.getTypes().indexOf(attack.getType()) > -1) {
+                    effectiveness = 1.5f;
                 }
+
+                for(MonsterType playerType : activeMonster.getTypes()) {
+                    if (attack.getType().getWeaknesses().indexOf(playerType.getName()) >= 0) {
+                        effectiveness *= 2;
+                    }
+
+                    if (attack.getType().getResistances().indexOf(playerType.getName()) >= 0) {
+                        effectiveness /= 2;
+                    }
+
+                    if (attack.getType().getImmunities().indexOf(playerType.getName()) >= 0) {
+                        effectiveness = 0f;
+                    }
+                }
+                effectivenesses.add(effectiveness);
             }
 
-            int minIndex = effectivenesses.indexOf(Collections.min(effectivenesses));
-
-            if(minIndex != activeOpponentMonsterIndex) {
-                return minIndex;
-            } else {
-                return -1;
-            }
+            return effectivenesses.indexOf(Collections.max(effectivenesses));
         } else {
             return new Random().nextInt(opponentMonster.getAttacks().size());
         }
