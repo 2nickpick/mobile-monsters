@@ -1595,7 +1595,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
 
         if(effectiveness == 0) {
-            this.queueSimpleOutput("It's does not affect...");
+            this.queueSimpleOutput("It does not affect...");
         } else {
             if (effectiveness > 1f) {
                 this.queueSimpleOutput("It's super effective!!!");
@@ -1617,7 +1617,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 int mustSwitchMonster = this.opponentMustSwitchMonster();
                 if (mustSwitchMonster == -1) {
                     //handle victory
-                    queueVictoryOutput("Victory!!!");
+                    queueVictoryOutput("You win!!!");
 
                     this.startNextTurn = false;
                     this.setNextChildScene(victoryMenu);
@@ -1631,7 +1631,7 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                     this.setNextChildScene(monsterMenu);
                 } else {
                     //handle defeat
-                    queueDefeatOutput("Defeat!!!");
+                    queueDefeatOutput("You lost... Try again!");
 
                     this.startNextTurn = false;
                     this.setNextChildScene(defeatMenu);
