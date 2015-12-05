@@ -1,5 +1,5 @@
 # Mobile Monsters
-# Developed by [John Zank](https://github.com/zank87/) and [Nicholas Pickering](https://github.com/2nickpick/)
+## Developed by [John Zank](https://github.com/zank87/) and [Nicholas Pickering](https://github.com/2nickpick/)
 Mobile Monsters is an Android game developed with the AndEngine framework. It is heavily inspired by the Nintendo game, Pokemon. 
 
 This game was developed as part of the Development of Games and Mobile Applications course at the University of North Florida. 
