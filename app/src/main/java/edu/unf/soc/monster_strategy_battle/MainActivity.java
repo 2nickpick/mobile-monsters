@@ -1332,6 +1332,10 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
                 break;
             case 2:
                 // exit game
+                this.menuMusic.pause();
+                this.victoryMusic.pause();
+                this.defeatMusic.pause();
+                this.battleMusic.pause();
                 System.exit(0);
                 break;
             case 3:
@@ -1770,8 +1774,24 @@ public class MainActivity extends SimpleBaseGameActivity implements MenuScene.IO
 
     @Override
     protected void onDestroy() {
+        this.menuMusic.pause();
+        this.battleMusic.pause();
+        this.victoryMusic.pause();
+        this.defeatMusic.pause();
         super.onDestroy();
         System.exit(0);
+    }
+
+    protected void onPause() {
+        super.onPause();
+        this.getMusicManager().setMasterVolume(0);
+    }
+
+    protected synchronized void onResume() {
+        super.onResume();
+        System.gc();
+
+        this.getMusicManager().setMasterVolume(1.0f);
     }
 
 }

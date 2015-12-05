@@ -26,15 +26,18 @@ public abstract class OutputScene extends Scene implements IOnSceneTouchListener
     private boolean ready; //finished writing out
     private boolean complete; //load next scene
     protected boolean animating = false; //onSceneReady is still running
+    protected boolean scenePlayed = false;
     private int gameOutputTextCounter;
 
     private final Text gameOutputText;
+    private final Text tapToContinue;
 
     public OutputScene(String outputText, MainActivity mainActivity, Font sansSmall) {
         super();
         this.outputText = outputText;
         this.ready = false;
         this.complete = false;
+        this.animating = false;
         this.mainActivity = mainActivity;
         this.sansSmall = sansSmall;
 
@@ -56,6 +59,14 @@ public abstract class OutputScene extends Scene implements IOnSceneTouchListener
         char[] array = new char[outputText.length()];
         Arrays.fill(array, ' ');
         String startingOutputText = new String(array);
+
+        tapToContinue = new Text(
+            gameOutputBox.getWidth() - 180,
+            gameOutputBox.getHeight() - 25,
+            sansSmall,
+            "Tap Screen to Continue...",
+            mainActivity.getVertexBufferObjectManager()
+        );
 
         gameOutputText = new Text(
                 15,
@@ -81,13 +92,19 @@ public abstract class OutputScene extends Scene implements IOnSceneTouchListener
                     ready = true;
 
                     // run the callback
-                    animating = true;
-                    onSceneReady();
+                    if(!scenePlayed) {
+                        animating = true;
+                        scenePlayed = true;
+                        tapToContinue.setVisible(true);
+                        onSceneReady();
+                    }
                 }
             }
         }));
 
         gameOutputBox.attachChild(gameOutputText);
+        gameOutputBox.attachChild(tapToContinue);
+        tapToContinue.setVisible(false);
         this.attachChild(gameOutputBox);
 
     }
@@ -119,10 +136,15 @@ public abstract class OutputScene extends Scene implements IOnSceneTouchListener
                 gameOutputTextCounter = outputText.length();
 
                 // run the callback
-                this.animating = true;
-                onSceneReady();
+                if(!this.scenePlayed) {
+                    this.scenePlayed = true;
+                    this.animating = true;
+                    tapToContinue.setVisible(true);
+                    onSceneReady();
+                }
+            }
 
-            } else if(!this.animating) {
+            else if(this.scenePlayed && !this.animating) {
                 this.complete = true;
                 mainActivity.drawGameOutputQueue();
             }
